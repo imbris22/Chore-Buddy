@@ -9,7 +9,12 @@ export const useTasksStore = create(
         // sample chores (mix of recurring and one-off)
         "ch_trash":   { id:"ch_trash",   title:"Trash",           points:2, recurring:true  },
         "ch_dishes":  { id:"ch_dishes",  title:"Dishes",          points:3, recurring:false },
-        "ch_replace": { id:"ch_replace", title:"Replace light",   points:4, recurring:false },
+        "ch_replace": { id:"ch_replace", title:"Replace light",   points:2, recurring:false },
+        "ch_A":       { id:"A",          title:"A",               points:3, recurring:true  },
+        "ch_B":       { id:"B",          title:"B",               points:2, recurring:false },
+        "ch_C":       { id:"C",          title:"C",               points:3, recurring:false },
+        "ch_D":       { id:"D",          title:"D",               points:2, recurring:false },
+        "ch_E":       { id:"E",          title:"E",               points:3, recurring:false },
       },
       // assignments[cycleStartISO] = { taskId: memberId }
       assignments: {},
