@@ -22,6 +22,14 @@ export const useCircleStore = create(
       setTieCursor: (tieCursor) => set({ tieCursor }),
       setRecurringNextIdx: (recurringNextIdx) => set({ recurringNextIdx }),
     }),
-    { name: "cb_circle", storage: createJSONStorage(() => AsyncStorage) }
+    {
+      name: "cb_circle",
+      storage: createJSONStorage(() => AsyncStorage),
+      // do not persist currentUserId (so changing default in code takes effect)
+      partialize: (state) => {
+        const { currentUserId, ...rest } = state;
+        return rest;
+      }
+    }
   )
 );
