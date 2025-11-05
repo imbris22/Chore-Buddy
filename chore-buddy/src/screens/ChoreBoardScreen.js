@@ -8,14 +8,15 @@ import { useCircleStore } from "../state/circleStore";
 import { useTasksStore } from "../state/tasksStore";
 import { currentWeek } from "../lib/cycle";
 import { assignTasks } from "../lib/allocator";
-import BottomNav from "../components/BottomTabs";
 
-// ✅ logo
 import Logo from "../../assets/logo.png";
+import GroceryIcon from "../../assets/chore icons/shopping-basket.png";
 
 export default function ChoreBoardScreen() {
-  const { members, currentUserId, memberPoints, tieCursor, recurringNextIdx,
-          setTotals, setTieCursor, setRecurringNextIdx } = useCircleStore();
+  const {
+    members, currentUserId, memberPoints, tieCursor, recurringNextIdx,
+    setTotals, setTieCursor, setRecurringNextIdx
+  } = useCircleStore();
   const { chores, assignments, status, upsertAssignments } = useTasksStore();
 
   const week = currentWeek();
@@ -24,11 +25,12 @@ export default function ChoreBoardScreen() {
 
   const [generated, setGenerated] = React.useState(Boolean(assignments[cycleKey]));
   const assignMap = assignments[cycleKey] || {};
-  const taskList = Object.values(chores);
+  const taskList = React.useMemo(() => Object.values(chores), [chores]);
 
-  const myTasks = React.useMemo(() => {
-    return taskList.filter(t => assignMap[t.id] === myMember.id);
-  }, [assignMap, taskList, myMember]);
+  const myTasks = React.useMemo(
+    () => taskList.filter(t => assignMap[t.id] === myMember.id),
+    [assignMap, taskList, myMember]
+  );
 
   const totals = React.useMemo(() => {
     const max = myTasks.reduce((s,t)=>s+(t.points||1),0);
@@ -41,9 +43,7 @@ export default function ChoreBoardScreen() {
 
   const generateWeek = () => {
     const { assignments: map, state } = assignTasks(members, taskList, {
-      memberPoints,
-      tieCursor,
-      recurringNextIdx,
+      memberPoints, tieCursor, recurringNextIdx,
     });
     upsertAssignments(cycleKey, map);
     setTotals(state.memberPoints);
@@ -53,9 +53,7 @@ export default function ChoreBoardScreen() {
   };
 
   return (
-    <View style={s.wrap}>
     <ScrollView style={s.container} contentContainerStyle={s.content}>
-
       {/* Header */}
       <View style={s.header}>
         <View style={s.logoRow}>
@@ -68,12 +66,12 @@ export default function ChoreBoardScreen() {
       <Text style={s.hi}>Hi {myMember.name}!</Text>
       <Text style={s.week}>Your chores for week of {new Date(week.start).toLocaleDateString()}</Text>
 
-      {/* Tasks */}
+      {/* Task cards */}
       <View style={s.row}>
         {generated ? (
-          myTasks.length ? myTasks.map((t) => (
-            <ChoreCard key={t.id} title={t.title} points={t.points} />
-          )) : <Text style={s.empty}>No chores assigned.</Text>
+          myTasks.length
+            ? myTasks.map((t) => <ChoreCard key={t.id} title={t.title} points={t.points} />)
+            : <Text style={s.empty}>No chores assigned.</Text>
         ) : (
           <Pressable onPress={generateWeek} style={s.generateBtn}>
             <Text style={s.generateText}>Generate Week</Text>
@@ -81,87 +79,78 @@ export default function ChoreBoardScreen() {
         )}
       </View>
 
-      {/* Progress */}
+      {/* Progress summary */}
       <View style={s.progressWrap}>
         <ProgressBar value={totals.done} max={totals.max} />
         <Text style={s.progressText}>{totals.done}/{totals.max || 0} points completed</Text>
       </View>
 
-      {/* Add chore */}
+      {/* Figma: centered blue Add Chore */}
       <Pressable style={s.addBtn}>
         <Text style={s.addText}>+ Add Chore</Text>
       </Pressable>
 
-      {/* Your Circle */}
+      {/* Figma: full-width pink Grocery List bar */}
+      <Pressable style={s.groceryBtn} onPress={() => {}}>
+        <Image source={GroceryIcon} style={s.groceryIcon} />
+        <Text style={s.groceryText}>Grocery List</Text>
+      </Pressable>
+
+      {/* Your Circle card */}
       <View style={s.section}>
         <Text style={s.sectionTitle}>Your Circle</Text>
-
         <View style={s.circleRow}>
-          {members.map(m => {
+          {members.map((m) => {
             const weeklyTotal = taskList
-              .filter(t => assignMap[t.id] === m.id)
-              .reduce((s,t)=>s+(t.points||1),0);
+              .filter((t) => assignMap[t.id] === m.id)
+              .reduce((s, t) => s + (t.points || 1), 0);
             const weeklyDone = taskList
-              .filter(t => assignMap[t.id] === m.id)
-              .reduce((s,t)=>s + (status[`${cycleKey}:${t.id}`]==="done" ? (t.points||1) : 0), 0);
-
+              .filter((t) => assignMap[t.id] === m.id)
+              .reduce((s, t) => s + (status[`${cycleKey}:${t.id}`] === "done" ? (t.points || 1) : 0), 0);
             return (
-              <View style={s.circleItem} key={m.id}>
-                <Avatar image={m.avatar} name={m.name} value={weeklyDone} max={weeklyTotal||1} />
+              <View key={m.id} style={s.circleItem}>
+                <Avatar image={m.avatar} name={m.name} value={weeklyDone} max={weeklyTotal || 1} />
               </View>
             );
           })}
         </View>
       </View>
-
     </ScrollView>
-
-     <View style={s.navWrap}>
-        <BottomNav active="Home" />
-      </View>
-    </View>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   content: { padding: 16 },
-  wrap: { flex: 1, backgroundColor: COLORS.bg },
 
-  navWrap: {
-    position: "absolute",
-    left: 0, right: 0, bottom: 10,
-  }, 
-
+  /* Header matches Figma block */
   header: {
     backgroundColor: COLORS.secondary,
-    borderRadius: 12,
+    borderRadius: 16,
     justifyContent: "center",
     width: "100%",
-    height: 80,
-    marginTop: 18,
-    marginBottom: 12,
+    height: 88,
+    marginTop: 16,
+    marginBottom: 16,
   },
   logoRow: { flexDirection: "row", alignItems: "center" },
-  logoImg: { width: 120, height: 120, marginLeft: -20 },
-  logoText: {
-    color: COLORS.text,
-    fontSize: 28,
-    fontFamily: "Jersey",
-    marginLeft: -20,
-  },
+  logoImg: { width: 120, height: 120, marginLeft: -16 },
+  logoText: { color: COLORS.text, fontSize: 28, fontFamily: "Jersey", marginLeft: -14 },
 
-  hi: { color: COLORS.text, fontSize: 22, marginTop: 8, fontFamily: "Jersey" },
+  hi: { color: COLORS.text, fontSize: 22, marginTop: 2, fontFamily: "Jersey" },
   week: { color: COLORS.text, opacity: 0.8, marginBottom: 12 },
 
-  row: { flexDirection: "row", gap: 12 },
+  row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
   empty: { color: COLORS.text },
 
-  progressWrap: { marginTop: 14 },
+  progressWrap: { marginTop: 12 },
   progressText: { color: COLORS.text, opacity: 0.8, marginTop: 6, textAlign: "center" },
 
+  /* Centered blue Add Chore (70% width) */
   addBtn: {
-    marginTop: 16,
+    alignSelf: "center",
+    marginTop: 14,
+    width: "70%",
     backgroundColor: COLORS.secondary,
     paddingVertical: 12,
     borderRadius: 12,
@@ -169,34 +158,46 @@ const s = StyleSheet.create({
   },
   addText: { color: COLORS.text, fontSize: 16, fontFamily: "Jersey" },
 
-  section: {
-    marginTop: 18,
-    backgroundColor: "#faf3e7", // cream like Figma
-    borderRadius: 16,
+  /* Full-width Grocery List bar */
+  groceryBtn: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F1C6D2",
     paddingVertical: 14,
-    paddingHorizontal: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    paddingHorizontal: 16,
+    borderRadius: 12,
   },
+  groceryIcon: { width: 22, height: 22, marginRight: 10 },
+  groceryText: { fontSize: 18, fontFamily: "Jersey", color: COLORS.text },
 
-  sectionTitle: { color: COLORS.text, marginBottom: 8, fontSize: 16 },
+  /* Cream card, no border, soft shadow */
+  section: {
+    marginTop: 16,
+    backgroundColor: "#F7EFE3",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
+  },
+  sectionTitle: { color: COLORS.text, marginBottom: 12, fontSize: 16, fontFamily: "Jersey" },
 
+  /* Even spacing like Figma */
   circleRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    paddingTop: 6,
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
   },
-
   circleItem: {
-    width: "25%",
+    width: "24%",
     alignItems: "center",
-    marginBottom: 18,
   },
 
+  /* “Generate Week” standby button */
   generateBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
