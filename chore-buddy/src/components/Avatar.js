@@ -6,35 +6,39 @@ import ProgressBar from "./ProgressBar";
 export default function Avatar({ image, name, value = 0, max = 1 }) {
   return (
     <View style={s.wrap}>
-      <View style={s.face}>
-        <Image source={image} style={s.avatarImg} resizeMode="cover" />
+      <View style={s.stickerBox}>
+        <Image source={image} style={s.sticker} resizeMode="contain" />
       </View>
       <Text style={s.name}>{name}</Text>
-      <ProgressBar value={value} max={max} />
+      <View style={s.bar}>
+        <ProgressBar value={value} max={max} />
+      </View>
     </View>
   );
 }
 
 const s = StyleSheet.create({
-  wrap: { width: 82, alignItems: "center" },
-  face: {
-    width: 58,
-    height: 58,
-    borderRadius: 16,
-    backgroundColor: COLORS.card,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+  // width handled by parent grid; just center
+  wrap: { alignItems: "center" },
+
+  // fixed square ensures identical centering regardless of PNG padding
+  stickerBox: {
+    width: 86,
+    height: 86,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden", // ensures the image fits inside rounded corners
   },
-  avatarImg: {
-    width: "100%",
-    height: "100%",
-  },
+  sticker: { width: 120, height: 120 },
+
   name: {
+    fontSize: 14,
     color: COLORS.text,
-    marginTop: 6,
-    marginBottom: 6,
+    marginTop: 4,
+    marginBottom: 4,
+    fontFamily: "Inter_500Medium",
+    textAlign: "center",
   },
+
+  // narrow bar under each avatar
+  bar: { width: 72 },
 });
