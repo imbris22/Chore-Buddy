@@ -10,7 +10,7 @@ import { currentWeek } from "../lib/cycle";
 import { assignTasks } from "../lib/allocator";
 
 import Logo from "../../assets/logo.png";
-import GroceryIcon from "../../assets/chore icons/shopping-basket.png";
+import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
 
 export default function ChoreBoardScreen() {
   const {
