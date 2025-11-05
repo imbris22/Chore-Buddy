@@ -56,7 +56,7 @@ const s = StyleSheet.create({
     color: COLORS.text,
     marginTop: 4,
     marginBottom: 4,
-    fontFamily: "Inter_500Medium",
+    fontFamily: "Kantumruy",
     textAlign: "center",
   },
 

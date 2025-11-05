@@ -1,8 +1,12 @@
-import { registerRootComponent } from 'expo';
+import { registerRootComponent } from "expo";
+import App from "./App";
+import { Text as RNText } from "react-native";
 
-import App from './App';
+// ensure Text default uses the loaded font key (must match useFonts key in App.js)
+if (!RNText.defaultProps) RNText.defaultProps = {};
+RNText.defaultProps.style = {
+  ...(RNText.defaultProps.style || {}),
+  fontFamily: "Kantumruy",
+};
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
 registerRootComponent(App);
