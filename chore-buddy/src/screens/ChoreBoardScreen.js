@@ -19,6 +19,11 @@ import BottomNav from "../components/BottomNav";
 
 import Logo from "../../assets/logo.png";
 import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
+import BottomArt from "../../assets/background image.png";
+
+// bottom nav + art sizing
+const NAV_HEIGHT = 72;
+const BG_ART_HEIGHT = 180;
 
 export default function ChoreBoardScreen() {
   const {
@@ -31,6 +36,7 @@ export default function ChoreBoardScreen() {
     setTieCursor,
     setRecurringNextIdx,
   } = useCircleStore();
+
   const { chores, assignments, status, upsertAssignments } = useTasksStore();
 
   const week = currentWeek();
@@ -110,18 +116,18 @@ export default function ChoreBoardScreen() {
           </Text>
         </View>
 
-        {/* Figma: centered blue Add Chore */}
+        {/* Add Chore */}
         <Pressable style={s.addBtn}>
           <Text style={s.addText}>+ Add Chore</Text>
         </Pressable>
 
-        {/* Figma: full-width pink Grocery List bar */}
-        <Pressable style={s.groceryBtn} onPress={() => {}}>
+        {/* Grocery List */}
+        <Pressable style={s.groceryBtn}>
           <Image source={GroceryIcon} style={s.groceryIcon} />
           <Text style={s.groceryText}>Grocery List</Text>
         </Pressable>
 
-        {/* Your Circle card */}
+        {/* Your Circle */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>Your Circle</Text>
           <View style={s.circleRow}>
@@ -152,8 +158,14 @@ export default function ChoreBoardScreen() {
             })}
           </View>
         </View>
+
+        <View style={{ height: BG_ART_HEIGHT + 20 }} />
       </ScrollView>
 
+      {/* Bottom Background Characters */}
+      <Image source={BottomArt} style={s.bgArt} resizeMode="contain" />
+
+      {/* Bottom Navigation */}
       <View style={s.navWrap}>
         <BottomNav active="Home" />
       </View>
@@ -162,18 +174,17 @@ export default function ChoreBoardScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.bg },
-  content: { padding: 16 },
   wrap: { flex: 1, backgroundColor: COLORS.bg },
+  container: { flex: 1 },
+  content: { padding: 16, paddingBottom: 140 },
 
   navWrap: {
     position: "absolute",
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
   },
 
-  /* Header matches Figma block */
   header: {
     backgroundColor: COLORS.secondary,
     borderRadius: 16,
@@ -192,7 +203,7 @@ const s = StyleSheet.create({
     marginLeft: -14,
   },
 
-  hi: { color: COLORS.text, fontSize: 22, marginTop: 2, fontFamily: "Jersey" },
+  hi: { color: COLORS.text, fontSize: 22, fontFamily: "Jersey", marginTop: 2 },
   week: { color: COLORS.text, opacity: 0.8, marginBottom: 12 },
 
   row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
@@ -206,7 +217,6 @@ const s = StyleSheet.create({
     textAlign: "center",
   },
 
-  /* Centered blue Add Chore (70% width) */
   addBtn: {
     alignSelf: "center",
     marginTop: 14,
@@ -218,7 +228,6 @@ const s = StyleSheet.create({
   },
   addText: { color: COLORS.text, fontSize: 16, fontFamily: "Jersey" },
 
-  /* Full-width Grocery List bar */
   groceryBtn: {
     marginTop: 16,
     flexDirection: "row",
@@ -231,7 +240,6 @@ const s = StyleSheet.create({
   groceryIcon: { width: 22, height: 22, marginRight: 10 },
   groceryText: { fontSize: 18, fontFamily: "Jersey", color: COLORS.text },
 
-  /* Cream card, no border, soft shadow */
   section: {
     marginTop: 16,
     backgroundColor: "#F7EFE3",
@@ -251,7 +259,6 @@ const s = StyleSheet.create({
     fontFamily: "Jersey",
   },
 
-  /* Even spacing like Figma */
   circleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -262,7 +269,6 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
 
-  /* “Generate Week” standby button */
   generateBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
@@ -270,4 +276,15 @@ const s = StyleSheet.create({
     borderRadius: 12,
   },
   generateText: { color: COLORS.text },
+
+  bgArt: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: NAV_HEIGHT + 4,
+    height: BG_ART_HEIGHT,
+    width: "100%",
+    opacity: 0.5, // 50% opacity
+    zIndex: 1,
+  },
 });
