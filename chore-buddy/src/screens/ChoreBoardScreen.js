@@ -119,19 +119,26 @@ const s = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     borderRadius: 8,
     marginBottom: 12,
+    marginTop: 20,
+    justifyContent: "center",
+    width: "100%",
+    height: 80,
   },
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
+    
   },
   logoImg: {
     width: 120,
     height: 120,
+    marginLeft: -20,
   },
   logoText: {
     color: COLORS.text,
     fontSize: 28,
     fontFamily: "Jersey_25", // ✅ Jersey 25
+    marginLeft: -20,
   },
 
   hi: { color: COLORS.text, fontSize: 22, marginTop: 8 },
