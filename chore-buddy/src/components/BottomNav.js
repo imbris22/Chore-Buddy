@@ -1,21 +1,44 @@
 // components/BottomNav.js
 import React from "react";
-import { View, Text, Image, Pressable, StyleSheet, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import COLORS from "../theme/colors";
 
 // tabs config so it’s easy to wire to real navigation later
 export const TABS = [
-  { key: "Home",     label: "Home",     icon: "home" },
-  { key: "History",  label: "History",  icon: "hist" },
-  { key: "Rankings", label: "Rankings", icon: "star" },
-  { key: "Profile",  label: "Profile",  icon: "prof" },
+  {
+    key: "Home",
+    label: "Home",
+    icon: require("../../assets/nav-bar-icons/house.png"),
+  },
+  {
+    key: "History",
+    label: "History",
+    icon: require("../../assets/nav-bar-icons/history.png"),
+  },
+  {
+    key: "Rankings",
+    label: "Rankings",
+    icon: require("../../assets/nav-bar-icons/star.png"),
+  },
+  {
+    key: "Profile",
+    label: "Profile",
+    icon: require("../../assets/nav-bar-icons/user.png"),
+  },
 ];
 
 export default function BottomNav({ active = "Home", onTabPress }) {
   return (
     <SafeAreaView style={s.safe} edges={["bottom"]}>
       <View style={s.bar}>
-        {TABS.map(tab => {
+        {TABS.map((tab) => {
           const isActive = tab.key === active;
           return (
             <Pressable
@@ -29,7 +52,9 @@ export default function BottomNav({ active = "Home", onTabPress }) {
                 style={[s.icon, isActive && s.iconActive]}
                 resizeMode="contain"
               />
-              <Text style={[s.label, isActive && s.labelActive]}>{tab.label}</Text>
+              <Text style={[s.label, isActive && s.labelActive]}>
+                {tab.label}
+              </Text>
             </Pressable>
           );
         })}
@@ -45,9 +70,9 @@ const s = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     height: 72,
-    backgroundColor: "#FFF8F0",                 // cream
+    backgroundColor: "#FFF8F0", // cream
     borderTopWidth: 1,
-    borderTopColor: "#E8D9CC",                  // subtle divider
+    borderTopColor: "#E8D9CC", // subtle divider
     shadowColor: "#BFAE9C",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.05,
