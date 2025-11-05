@@ -137,11 +137,11 @@ const s = StyleSheet.create({
   logoText: {
     color: COLORS.text,
     fontSize: 28,
-    fontFamily: "Jersey_25", // ✅ Jersey 25
-    marginLeft: -20,
+    fontFamily: "Jersey",    marginLeft: -20,
   },
 
-  hi: { color: COLORS.text, fontSize: 22, marginTop: 8 },
+  hi: { color: COLORS.text, fontSize: 22, marginTop: 8, fontFamily: "Jersey" },
+
   week: { color: COLORS.text, opacity: 0.8, marginBottom: 12 },
   row: { flexDirection: "row", gap: 12 },
   empty: { color: COLORS.text },
@@ -156,7 +156,7 @@ const s = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
-  addText: { color: COLORS.text, fontSize: 16 },
+  addText: { color: COLORS.text, fontSize: 16, fontFamily: "Jersey" },
   section: {
     marginTop: 18,
     backgroundColor: COLORS.card,
