@@ -148,6 +148,10 @@ export default function ChoreBoardScreen() {
                     name={m.name}
                     value={weeklyDone}
                     max={weeklyTotal || 1}
+                    imageOffsetY={
+                      m.id === "m_sam" || m.id === "m_bear" ? 10 : 0
+                    }
+                    imageScale={m.id === "m_bear" ? 1.2 : 1}
                   />
                 </View>
               );

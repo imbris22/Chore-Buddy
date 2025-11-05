@@ -3,11 +3,32 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import COLORS from "../theme/colors";
 import ProgressBar from "./ProgressBar";
 
-export default function Avatar({ image, name, value = 0, max = 1 }) {
+export default function Avatar({
+  image,
+  name,
+  value = 0,
+  max = 1,
+  imageOffsetY = 0, // move the sticker up/down inside the fixed box
+  imageOffsetX = 0, // optional: left/right nudge
+  imageScale = 1,
+}) {
   return (
     <View style={s.wrap}>
       <View style={s.stickerBox}>
-        <Image source={image} style={s.sticker} resizeMode="contain" />
+        <Image
+          source={image}
+          style={[
+            s.sticker,
+            {
+              transform: [
+                { translateY: imageOffsetY },
+                { translateX: imageOffsetX },
+                { scale: imageScale },
+              ],
+            },
+          ]}
+          resizeMode="contain"
+        />
       </View>
       <Text style={s.name}>{name}</Text>
       <View style={s.bar}>
