@@ -6,15 +6,15 @@ export const useTasksStore = create(
   persist(
     (set, get) => ({
       chores: {
-        // sample chores (mix of recurring and one-off)
-        "ch_trash":   { id:"ch_trash",   title:"Trash",           points:2, recurring:true  },
-        "ch_dishes":  { id:"ch_dishes",  title:"Dishes",          points:3, recurring:false },
-        "ch_replace": { id:"ch_replace", title:"Replace light",   points:2, recurring:false },
-        "ch_buy_eggs":       { id:"ch_buy_eggs",          title:"Buy eggs",               points:3, recurring:true  },
-        "ch_vacuum":       { id:"ch_vacuum",          title:"Vacuum",               points:2, recurring:false },
-        "ch_laundry":       { id:"ch_laundry",          title:"Laundry",               points:3, recurring:false },
-        "ch_sweep":       { id:"ch_sweep",          title:"Sweep",               points:2, recurring:false },
-        "ch_fold_clothes":       { id:"ch_fold_clothes",          title:"Fold clothes",               points:3, recurring:false },
+        // sample chores (mix of recurring and one-off) — each has an icon from assets/chore-icons
+        "ch_trash":   { id:"ch_trash",   title:"Trash",           points:2, recurring:true,  icon: require("../../assets/chore-icons/trash-2.png") },
+        "ch_dishes":  { id:"ch_dishes",  title:"Dishes",          points:3, recurring:false, icon: require("../../assets/chore-icons/utensils.png") },
+        "ch_replace": { id:"ch_replace", title:"Replace light",   points:2, recurring:false, icon: require("../../assets/chore-icons/brush-cleaning.png") },
+        "ch_buy_eggs":{ id:"ch_buy_eggs",title:"Buy eggs",        points:3, recurring:true,  icon: require("../../assets/chore-icons/shopping-basket.png") },
+        "ch_vacuum":  { id:"ch_vacuum",  title:"Vacuum",          points:2, recurring:false, icon: require("../../assets/chore-icons/brush-cleaning.png") },
+        "ch_laundry": { id:"ch_laundry", title:"Laundry",         points:3, recurring:false, icon: require("../../assets/chore-icons/brush-cleaning.png") },
+        "ch_sweep":   { id:"ch_sweep",   title:"Sweep",           points:2, recurring:false, icon: require("../../assets/chore-icons/brush-cleaning.png") },
+        "ch_fold_clothes": { id:"ch_fold_clothes", title:"Fold clothes", points:3, recurring:false, icon: require("../../assets/chore-icons/brush-cleaning.png") },
       },
       // assignments[cycleStartISO] = { taskId: memberId }
       assignments: {},

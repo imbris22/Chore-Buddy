@@ -91,9 +91,7 @@ export default function ChoreBoardScreen() {
         <View style={s.row}>
           {generated ? (
             myTasks.length ? (
-              myTasks.map((t) => (
-                <ChoreCard key={t.id} title={t.title} points={t.points} />
-              ))
+              myTasks.map((t) => <ChoreCard key={t.id} chore={t} />)
             ) : (
               <Text style={s.empty}>No chores assigned.</Text>
             )
