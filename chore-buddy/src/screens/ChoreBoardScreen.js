@@ -10,7 +10,7 @@ import { currentWeek } from "../lib/cycle";
 import { assignTasks } from "../lib/allocator";
 import BottomNav from "../components/BottomTabs";
 
-// ✅ import your logo
+// ✅ logo
 import Logo from "../../assets/logo.png";
 
 export default function ChoreBoardScreen() {
@@ -55,8 +55,8 @@ export default function ChoreBoardScreen() {
   return (
     <View style={s.wrap}>
     <ScrollView style={s.container} contentContainerStyle={s.content}>
-      
-      {/* ✅ Logo + Text */}
+
+      {/* Header */}
       <View style={s.header}>
         <View style={s.logoRow}>
           <Image source={Logo} style={s.logoImg} resizeMode="contain" />
@@ -68,7 +68,7 @@ export default function ChoreBoardScreen() {
       <Text style={s.hi}>Hi {myMember.name}!</Text>
       <Text style={s.week}>Your chores for week of {new Date(week.start).toLocaleDateString()}</Text>
 
-      {/* Chores row */}
+      {/* Tasks */}
       <View style={s.row}>
         {generated ? (
           myTasks.length ? myTasks.map((t) => (
@@ -95,6 +95,7 @@ export default function ChoreBoardScreen() {
       {/* Your Circle */}
       <View style={s.section}>
         <Text style={s.sectionTitle}>Your Circle</Text>
+
         <View style={s.circleRow}>
           {members.map(m => {
             const weeklyTotal = taskList
@@ -103,12 +104,16 @@ export default function ChoreBoardScreen() {
             const weeklyDone = taskList
               .filter(t => assignMap[t.id] === m.id)
               .reduce((s,t)=>s + (status[`${cycleKey}:${t.id}`]==="done" ? (t.points||1) : 0), 0);
+
             return (
-              <Avatar key={m.id} image={m.avatar} name={m.name} value={weeklyDone} max={weeklyTotal||1} />
+              <View style={s.circleItem} key={m.id}>
+                <Avatar image={m.avatar} name={m.name} value={weeklyDone} max={weeklyTotal||1} />
+              </View>
             );
           })}
         </View>
       </View>
+
     </ScrollView>
 
      <View style={s.navWrap}>
@@ -130,32 +135,25 @@ const s = StyleSheet.create({
 
   header: {
     backgroundColor: COLORS.secondary,
-    borderRadius: 8,
-    marginBottom: 12,
-    marginTop: 20,
+    borderRadius: 12,
     justifyContent: "center",
     width: "100%",
     height: 80,
+    marginTop: 18,
+    marginBottom: 12,
   },
-  logoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    
-  },
-  logoImg: {
-    width: 120,
-    height: 120,
-    marginLeft: -20,
-  },
+  logoRow: { flexDirection: "row", alignItems: "center" },
+  logoImg: { width: 120, height: 120, marginLeft: -20 },
   logoText: {
     color: COLORS.text,
     fontSize: 28,
-    fontFamily: "Jersey",    marginLeft: -20,
+    fontFamily: "Jersey",
+    marginLeft: -20,
   },
 
   hi: { color: COLORS.text, fontSize: 22, marginTop: 8, fontFamily: "Jersey" },
-
   week: { color: COLORS.text, opacity: 0.8, marginBottom: 12 },
+
   row: { flexDirection: "row", gap: 12 },
   empty: { color: COLORS.text },
 
@@ -170,16 +168,35 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   addText: { color: COLORS.text, fontSize: 16, fontFamily: "Jersey" },
+
   section: {
     marginTop: 18,
-    backgroundColor: COLORS.card,
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: "#faf3e7", // cream like Figma
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
+
   sectionTitle: { color: COLORS.text, marginBottom: 8, fontSize: 16 },
-  circleRow: { flexDirection: "row", justifyContent: "space-between" },
+
+  circleRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    paddingTop: 6,
+  },
+
+  circleItem: {
+    width: "25%",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+
   generateBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,
