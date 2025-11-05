@@ -84,6 +84,6 @@ const s = StyleSheet.create({
   item: { alignItems: "center", gap: 4, width: 80 },
   icon: { width: 24, height: 24, opacity: 0.55 },
   iconActive: { opacity: 1 },
-  label: { fontSize: 12, color: "#C6B7A6" },
-  labelActive: { color: COLORS.text, fontWeight: "500" }, // brown active
+  label: { fontSize: 12, color: "#C6B7A6", fontFamily: "Kantumruy" },
+  labelActive: { color: COLORS.text, fontWeight: "500", fontFamily: "Kantumruy" }, // brown active
 });

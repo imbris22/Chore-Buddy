@@ -193,18 +193,15 @@ const s = StyleSheet.create({
   },
 
   hi: { color: COLORS.text, fontSize: 22, marginTop: 2, fontFamily: "Jersey" },
-  week: { color: COLORS.text, opacity: 0.8, marginBottom: 12 },
+  // "your chores for week of ..." should use Kantumruy
+  week: { color: COLORS.text, opacity: 0.8, marginBottom: 12, fontFamily: "Kantumruy" },
 
   row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
   empty: { color: COLORS.text },
 
   progressWrap: { marginTop: 12 },
-  progressText: {
-    color: COLORS.text,
-    opacity: 0.8,
-    marginTop: 6,
-    textAlign: "center",
-  },
+  // progress / completed text should use Kantumruy
+  progressText: { color: COLORS.text, opacity: 0.8, marginTop: 6, textAlign: "center", fontFamily: "Kantumruy" },
 
   /* Centered blue Add Chore (70% width) */
   addBtn: {
