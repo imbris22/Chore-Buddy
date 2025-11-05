@@ -8,6 +8,7 @@ import { useCircleStore } from "../state/circleStore";
 import { useTasksStore } from "../state/tasksStore";
 import { currentWeek } from "../lib/cycle";
 import { assignTasks } from "../lib/allocator";
+import BottomNav from "../components/BottomTabs";
 
 // ✅ import your logo
 import Logo from "../../assets/logo.png";
@@ -52,6 +53,7 @@ export default function ChoreBoardScreen() {
   };
 
   return (
+    <View style={s.wrap}>
     <ScrollView style={s.container} contentContainerStyle={s.content}>
       
       {/* ✅ Logo + Text */}
@@ -108,12 +110,23 @@ export default function ChoreBoardScreen() {
         </View>
       </View>
     </ScrollView>
+
+     <View style={s.navWrap}>
+        <BottomNav active="Home" />
+      </View>
+    </View>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   content: { padding: 16 },
+  wrap: { flex: 1, backgroundColor: COLORS.bg },
+
+  navWrap: {
+    position: "absolute",
+    left: 0, right: 0, bottom: 10,
+  }, 
 
   header: {
     backgroundColor: COLORS.secondary,
