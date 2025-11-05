@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center", gap: 4
   },
   icon: { width: 32, height: 32, marginBottom: 6, resizeMode: "contain" },
-  title: { color: COLORS.text },
+  title: { color: COLORS.text, fontFamily: "Kantumruy" },
   points: { color: COLORS.text, opacity: 0.7, fontSize: 12, fontFamily: "Kantumruy" },
   iconPlaceholder: { backgroundColor: COLORS.border, borderRadius: 12, width: 24, height: 24, alignItems: "center", justifyContent: "center" },
 });
