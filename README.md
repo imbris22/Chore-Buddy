@@ -1,4 +1,4 @@
-# Chore-Buddy
+# Chore Buddy
 HCI Final Project
 
 ## AI attribution
