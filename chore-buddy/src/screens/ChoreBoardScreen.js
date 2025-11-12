@@ -16,12 +16,12 @@ import { useTasksStore } from "../state/tasksStore";
 import { currentWeek } from "../lib/cycle";
 import { assignTasks } from "../lib/allocator";
 import BottomNav from "../components/BottomNav";
+import CompleteChoreModal from "../components/CompleteChoreModal";
 
 import Logo from "../../assets/logo.png";
 import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
 import BottomArt from "../../assets/background image.png";
 
-// bottom nav + art sizing
 const NAV_HEIGHT = 72;
 const BG_ART_HEIGHT = 180;
 
@@ -37,15 +37,20 @@ export default function ChoreBoardScreen() {
     setRecurringNextIdx,
   } = useCircleStore();
 
-  const { chores, assignments, status, upsertAssignments } = useTasksStore();
+  const {
+    chores,
+    assignments,
+    status,
+    upsertAssignments,
+    setStatus,   // must exist in tasksStore
+    addHistory,  // must exist in tasksStore
+  } = useTasksStore();
 
   const week = currentWeek();
   const cycleKey = week.startISO;
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
 
-  const [generated, setGenerated] = React.useState(
-    Boolean(assignments[cycleKey])
-  );
+  const [generated, setGenerated] = React.useState(Boolean(assignments[cycleKey]));
   const assignMap = assignments[cycleKey] || {};
   const taskList = React.useMemo(() => Object.values(chores), [chores]);
 
@@ -63,6 +68,38 @@ export default function ChoreBoardScreen() {
     return { done, max };
   }, [myTasks, status, cycleKey]);
 
+  // Modal
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [selectedTask, setSelectedTask] = React.useState(null);
+
+  const openComplete = (task) => {
+    const pairKey = `${cycleKey}:${task.id}`;
+    console.log("Tapped task:", task.id, "status:", status[pairKey]); // DEBUG
+    if (status[pairKey] === "done") return;
+    setSelectedTask(task);
+    setModalOpen(true);
+  };
+
+  const confirmComplete = () => {
+    if (!selectedTask) return;
+    const pairKey = `${cycleKey}:${selectedTask.id}`;
+
+    setStatus(pairKey, "done"); // triggers progress recompute
+
+    const assigneeId = assignMap[selectedTask.id];
+    if (assigneeId) {
+      addHistory(assigneeId, {
+        ts: Date.now(),
+        cycleKey,
+        taskId: selectedTask.id,
+        title: selectedTask.title,
+        points: selectedTask.points || 1,
+      });
+    }
+
+    setModalOpen(false);
+  };
+
   const generateWeek = () => {
     const { assignments: map, state } = assignTasks(members, taskList, {
       memberPoints,
@@ -78,7 +115,12 @@ export default function ChoreBoardScreen() {
 
   return (
     <View style={s.wrap}>
-      <ScrollView style={s.container} contentContainerStyle={s.content}>
+      <ScrollView
+        style={s.container}
+        contentContainerStyle={s.content}
+        scrollEnabled={!modalOpen}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Header */}
         <View style={s.header}>
           <View style={s.logoRow}>
@@ -93,11 +135,13 @@ export default function ChoreBoardScreen() {
           Your chores for week of {new Date(week.start).toLocaleDateString()}
         </Text>
 
-        {/* Task cards */}
+        {/* Task cards (tap opens modal) */}
         <View style={s.row}>
           {generated ? (
             myTasks.length ? (
-              myTasks.map((t) => <ChoreCard key={t.id} chore={t} />)
+              myTasks.map((t) => (
+                <ChoreCard key={t.id} chore={t} onPress={() => openComplete(t)} />
+              ))
             ) : (
               <Text style={s.empty}>No chores assigned.</Text>
             )
@@ -152,9 +196,7 @@ export default function ChoreBoardScreen() {
                     name={m.name}
                     value={weeklyDone}
                     max={weeklyTotal || 1}
-                    imageOffsetY={
-                      m.id === "m_sam" || m.id === "m_bear" ? 10 : 0
-                    }
+                    imageOffsetY={m.id === "m_sam" || m.id === "m_bear" ? 10 : 0}
                     imageScale={m.id === "m_bear" ? 1.2 : 1}
                   />
                 </View>
@@ -166,13 +208,22 @@ export default function ChoreBoardScreen() {
         <View style={{ height: BG_ART_HEIGHT + 20 }} />
       </ScrollView>
 
-      {/* Bottom Background Characters */}
-      <Image source={BottomArt} style={s.bgArt} resizeMode="contain" />
+      {/* Bottom Background Characters (can't intercept touches now) */}
+      <Image source={BottomArt} style={s.bgArt} resizeMode="contain" pointerEvents="none" />
 
       {/* Bottom Navigation */}
       <View style={s.navWrap}>
         <BottomNav active="Home" />
       </View>
+
+      {/* Completion Modal */}
+      <CompleteChoreModal
+        visible={modalOpen}
+        choreName={(selectedTask && selectedTask.title) || ""}
+        points={(selectedTask && selectedTask.points) || 1}
+        onCancel={() => setModalOpen(false)}
+        onConfirm={confirmComplete}
+      />
     </View>
   );
 }
@@ -182,12 +233,7 @@ const s = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16, paddingBottom: 140 },
 
-  navWrap: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
+  navWrap: { position: "absolute", bottom: 0, left: 0, right: 0 },
 
   header: {
     backgroundColor: COLORS.secondary,
@@ -200,22 +246,20 @@ const s = StyleSheet.create({
   },
   logoRow: { flexDirection: "row", alignItems: "center" },
   logoImg: { width: 120, height: 120, marginLeft: -16 },
-  logoText: {
-    color: COLORS.text,
-    fontSize: 28,
-    fontFamily: "Jersey",
-    marginLeft: -14,
-  },
+  logoText: { color: COLORS.text, fontSize: 28, fontFamily: "Jersey", marginLeft: -14 },
 
   hi: { color: COLORS.text, fontSize: 22, marginTop: 2, fontFamily: "Jersey" },
-  // "your chores for week of ..." should use Kantumruy
   week: { color: COLORS.text, opacity: 0.8, marginBottom: 12, fontFamily: "Kantumruy" },
 
+  // small tester
+  testBtn: { alignSelf: "flex-start", backgroundColor: "#EEE", paddingVertical: 6, paddingHorizontal: 10, borderRadius: 8, marginBottom: 8 },
+  testBtnText: { color: "#333" },
+
   row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
+
   empty: { color: COLORS.text },
 
   progressWrap: { marginTop: 12 },
-  // progress / completed text should use Kantumruy
   progressText: { color: COLORS.text, opacity: 0.8, marginTop: 6, textAlign: "center", fontFamily: "Kantumruy" },
 
   addBtn: {
@@ -253,29 +297,12 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     elevation: 1,
   },
-  sectionTitle: {
-    color: COLORS.text,
-    marginBottom: 12,
-    fontSize: 16,
-    fontFamily: "Jersey",
-  },
+  sectionTitle: { color: COLORS.text, marginBottom: 12, fontSize: 16, fontFamily: "Jersey" },
 
-  circleRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-  },
-  circleItem: {
-    width: "24%",
-    alignItems: "center",
-  },
+  circleRow: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 8 },
+  circleItem: { width: "24%", alignItems: "center" },
 
-  generateBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-  },
+  generateBtn: { backgroundColor: COLORS.primary, paddingVertical: 14, paddingHorizontal: 16, borderRadius: 12 },
   generateText: { color: COLORS.text },
 
   bgArt: {
@@ -285,7 +312,7 @@ const s = StyleSheet.create({
     bottom: NAV_HEIGHT + 4,
     height: BG_ART_HEIGHT,
     width: "100%",
-    opacity: 0.5, // 50% opacity
+    opacity: 0.5,
     zIndex: 1,
   },
 });

@@ -21,7 +21,7 @@ export const useCircleStore = create(
         { id: "m_sam",    name: "Sam",    avatar: samAvatar },
         { id: "m_jordan", name: "Jordan", avatar: jordanAvatar },
       ],
-      currentUserId: "m_bear",
+      currentUserId: "m_alex",
       // running totals
       memberPoints: {},           // { memberId: number }
       tieCursor: 0,
