@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native";
 import { useCircleStore } from "../state/circleStore";
 import COLORS from "../theme/colors";
@@ -105,7 +106,12 @@ export default function WelcomeSetupScreen({ navigation, route }) {
               <Text style={s.avatarTitle}>Choose an Avatar</Text>
               <Text style={s.avatarSubtitle}>Swipe to see more</Text>
 
-              <View style={s.avatarBgContainer}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={s.avatarScrollContent}
+                style={s.avatarScrollContainer}
+              >
                 <View style={s.avatarRow}>
                   {AVATARS.map((avatar) => (
                     <Pressable
@@ -127,7 +133,7 @@ export default function WelcomeSetupScreen({ navigation, route }) {
                     </Pressable>
                   ))}
                 </View>
-              </View>
+              </ScrollView>
 
               {/* Continue Button */}
               <Pressable
@@ -243,41 +249,45 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
 
-  avatarBgContainer: {
-    backgroundColor: "#F5E6D3",
-    borderRadius: 12,
-    padding: 16,
+  avatarScrollContainer: {
+    marginHorizontal: -24,
+    paddingHorizontal: 24,
     marginBottom: 24,
+  },
+
+  avatarScrollContent: {
+    paddingRight: 24,
   },
 
   avatarRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
+    gap: 16,
   },
 
   avatarBox: {
-    width: 90,
-    height: 90,
-    backgroundColor: COLORS.card,
+    width: 100,
+    height: 100,
+    backgroundColor: "transparent",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: COLORS.border,
+    borderWidth: 0,
+    borderColor: "transparent",
   },
 
   avatarBoxSelected: {
-    width: 110,
-    height: 110,
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary,
+    width: 100,
+    height: 100,
+    borderColor: "transparent",
+    backgroundColor: "transparent",
     opacity: 1,
+    transform: [{ scale: 1.1 }],
   },
 
   avatarImage: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
   },
 
   avatarImageSelected: {
