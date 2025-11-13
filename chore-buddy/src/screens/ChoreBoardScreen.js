@@ -26,6 +26,15 @@ const NAV_HEIGHT = 72;
 const BG_ART_HEIGHT = 180;
 
 export default function ChoreBoardScreen({ navigation }) {
+  // handle bottom nav presses from this screen (same pattern as GroceryList button)
+  const handleTabPress = (key) => {
+    if (key === "History") return navigation.navigate("History");
+    if (key === "Home") return navigation.navigate("ChoreBoard");
+    if (key === "Rankings") return navigation.navigate("Rankings");
+    if (key === "Profile") return navigation.navigate("Profile");
+    // fallback: noop
+  };
+
   const {
     members,
     currentUserId,
@@ -216,7 +225,7 @@ export default function ChoreBoardScreen({ navigation }) {
 
       {/* Bottom Navigation */}
       <View style={s.navWrap}>
-        <BottomNav active="Home" onTabPress={() => {}} />
+        <BottomNav active="Home" onTabPress={handleTabPress} />
       </View>
 
       {/* Completion Modal */}
