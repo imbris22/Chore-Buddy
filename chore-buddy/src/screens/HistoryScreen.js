@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import COLORS from "../theme/colors";
 import { useTasksStore } from "../state/tasksStore"; // store should export useTasksStore
+import { useCircleStore } from "../state/circleStore";
 import BottomNav from "../components/BottomNav";
 
 const logo = require("../../assets/logo.png");
@@ -39,25 +40,28 @@ export default function HistoryScreen({ navigation }) {
     if (key === "Profile") return navigation.navigate("Profile");
   };
 
-  // try several possible keys that the tasks store might use for completed items
-  const rawCompletions = useTasksStore(
-    (s) => s.completions || s.history || s.completed || s.completedTasks || []
-  );
+  const currentUserId = useCircleStore((s) => s.currentUserId);
 
-  // normalize array of completions to objects with at least: id/title/points/completedAt
-  const completions = useMemo(() => {
-    if (!rawCompletions) return [];
-    if (Array.isArray(rawCompletions)) return rawCompletions;
-    // if it's an object keyed by id
-    return Object.values(rawCompletions);
-  }, [rawCompletions]);
+  // read the history for the current user (fall back to sensible shapes)
+  const rawHistory = useTasksStore((s) => s.history);
 
-  // group completions by week start
+  // normalize to an array of completion entries for the current user
+  const completions = React.useMemo(() => {
+    if (!rawHistory) return [];
+    // preferred shape: history is an object keyed by memberId -> [entries]
+    if (rawHistory[currentUserId]) return rawHistory[currentUserId];
+    // if history is already an array (legacy), use it
+    if (Array.isArray(rawHistory)) return rawHistory;
+    // fallback: flatten all member lists
+    return Object.values(rawHistory).flat();
+  }, [rawHistory, currentUserId]);
+
+  // group completions by week start (unchanged grouping logic)
   const weeks = useMemo(() => {
     const map = new Map();
     completions.forEach((c) => {
-      // support several possible date keys
-      const dateVal = c.completedAt || c.completed_at || c.date || c.ts || c.time;
+      // support several possible date keys (ts is what addHistory sets)
+      const dateVal = c.ts || c.time || c.date || c.completedAt || c.completed_at;
       const date = dateVal ? new Date(dateVal) : new Date(); // fallback to now
       const ws = weekStartDate(date).getTime();
       if (!map.has(ws)) map.set(ws, []);
@@ -141,8 +145,10 @@ export default function HistoryScreen({ navigation }) {
                 {formatWeekLabel(week.weekStart)}
               </Text>
               {week.items.map((it) => (
-                <View key={it.id ?? it._date.getTime()} style={styles.historyItem}>
-                  <Text style={styles.itemTitle}>{it.title ?? it.name ?? it.choreTitle ?? "Untitled"}</Text>
+                <View key={`${it.taskId ?? it.id}-${it.ts ?? it._date.getTime()}`} style={styles.historyItem}>
+                  <Text style={styles.itemTitle}>
+                    {it.title ?? it.name ?? it.choreTitle ?? "Untitled"}
+                  </Text>
                   <Text style={styles.itemPoints}>
                     {it.points != null ? `+${it.points}` : `+${it.value ?? 0}`}
                   </Text>
