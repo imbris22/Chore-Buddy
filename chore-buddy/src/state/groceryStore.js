@@ -18,12 +18,21 @@ export const useGroceryStore = create((set) => ({
       return { items: [...state.items, item] };
     }),
 
-    toggleItem: (id) =>
+    toggleItem: (id) => {
+    // mark it as done first (so UI shows checked state)
     set((state) => ({
-        // once tapped, the item is removed from the list
-        items: state.items.filter((it) => it.id !== id),
-    })),
+        items: state.items.map((it) =>
+        it.id === id ? { ...it, done: true } : it
+        ),
+    }));
 
+    // wait before removing
+    setTimeout(() => {
+        set((state) => ({
+        items: state.items.filter((it) => it.id !== id),
+        }));
+    }, 300); // 300ms delay
+    },
 
   removeItem: (id) =>
     set((state) => ({
