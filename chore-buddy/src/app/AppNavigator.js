@@ -6,6 +6,7 @@ import GroceryListScreen from "../screens/GroceryListScreen";
 import HistoryScreen from "../screens/HistoryScreen";
 import JoinCircleScreen from "../screens/JoinCircleScreen";
 import WelcomeSetupScreen from "../screens/WelcomeSetupScreen";
+import RankingsScreen from "../screens/RankingsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function AppNavigator() {
         <Stack.Screen name="ChoreBoard" component={ChoreBoardScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
         <Stack.Screen name="GroceryList" component={GroceryListScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Rankings" component={RankingsScreen} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
