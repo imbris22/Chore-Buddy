@@ -51,15 +51,17 @@ export default function ChoreBoardScreen({ navigation }) {
     assignments,
     status,
     upsertAssignments,
-    setStatus,   // must exist in tasksStore
-    addHistory,  // must exist in tasksStore
+    setStatus, // must exist in tasksStore
+    addHistory, // must exist in tasksStore
   } = useTasksStore();
 
   const week = currentWeek();
   const cycleKey = week.startISO;
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
 
-  const [generated, setGenerated] = React.useState(Boolean(assignments[cycleKey]));
+  const [generated, setGenerated] = React.useState(
+    Boolean(assignments[cycleKey])
+  );
   const assignMap = assignments[cycleKey] || {};
   const taskList = React.useMemo(() => Object.values(chores), [chores]);
 
@@ -149,7 +151,11 @@ export default function ChoreBoardScreen({ navigation }) {
           {generated ? (
             myTasks.length ? (
               myTasks.map((t) => (
-                <ChoreCard key={t.id} chore={t} onPress={() => openComplete(t)} />
+                <ChoreCard
+                  key={t.id}
+                  chore={t}
+                  onPress={() => openComplete(t)}
+                />
               ))
             ) : (
               <Text style={s.empty}>No chores assigned.</Text>
@@ -213,7 +219,9 @@ export default function ChoreBoardScreen({ navigation }) {
                       name={m.name}
                       value={weeklyDone}
                       max={weeklyTotal || 1}
-                    imageOffsetY={m.id === "m_sam" || m.id === "m_bear" ? 10 : 0}
+                      imageOffsetY={
+                        m.id === "m_sam" || m.id === "m_bear" ? 10 : 0
+                      }
                       imageScale={m.id === "m_bear" ? 1.2 : 1}
                     />
                   </View>
@@ -227,7 +235,12 @@ export default function ChoreBoardScreen({ navigation }) {
       </ScrollView>
 
       {/* Bottom Background Characters (can't intercept touches now) */}
-      <Image source={BottomArt} style={s.bgArt} resizeMode="contain" pointerEvents="none" />
+      <Image
+        source={BottomArt}
+        style={s.bgArt}
+        resizeMode="contain"
+        pointerEvents="none"
+      />
 
       {/* Bottom Navigation */}
       <View style={s.navWrap}>
@@ -264,13 +277,30 @@ const s = StyleSheet.create({
   },
   logoRow: { flexDirection: "row", alignItems: "center" },
   logoImg: { width: 120, height: 120, marginLeft: -16 },
-  logoText: { color: COLORS.text, fontSize: 28, fontFamily: "Jersey", marginLeft: -14 },
+  logoText: {
+    color: COLORS.text,
+    fontSize: 28,
+    fontFamily: "Jersey",
+    marginLeft: -14,
+  },
 
   hi: { color: COLORS.text, fontSize: 22, marginTop: 2, fontFamily: "Jersey" },
-  week: { color: COLORS.text, opacity: 0.8, marginBottom: 12, fontFamily: "Kantumruy" },
+  week: {
+    color: COLORS.text,
+    opacity: 0.8,
+    marginBottom: 12,
+    fontFamily: "Kantumruy",
+  },
 
   // small tester
-  testBtn: { alignSelf: "flex-start", backgroundColor: "#EEE", paddingVertical: 6, paddingHorizontal: 10, borderRadius: 8, marginBottom: 8 },
+  testBtn: {
+    alignSelf: "flex-start",
+    backgroundColor: "#EEE",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
   testBtnText: { color: "#333" },
 
   row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
@@ -278,7 +308,13 @@ const s = StyleSheet.create({
   empty: { color: COLORS.text },
 
   progressWrap: { marginTop: 12 },
-  progressText: { color: COLORS.text, opacity: 0.8, marginTop: 6, textAlign: "center", fontFamily: "Kantumruy" },
+  progressText: {
+    color: COLORS.text,
+    opacity: 0.8,
+    marginTop: 6,
+    textAlign: "center",
+    fontFamily: "Kantumruy",
+  },
 
   addBtn: {
     alignSelf: "center",
@@ -315,12 +351,31 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     elevation: 1,
   },
-  sectionTitle: { color: COLORS.text, marginBottom: 12, fontSize: 16, fontFamily: "Jersey" },
+  sectionTitle: {
+    color: COLORS.text,
+    marginBottom: 12,
+    fontSize: 16,
+    fontFamily: "Jersey",
+  },
 
-  circleRow: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 8 },
-  circleItem: { width: "24%", alignItems: "center" },
+  circleScrollContent: {
+    paddingHorizontal: 4,
+  },
 
-  generateBtn: { backgroundColor: COLORS.primary, paddingVertical: 14, paddingHorizontal: 16, borderRadius: 12 },
+  circleRow: {
+    flexDirection: "row",
+    gap: 8,
+    paddingHorizontal: 8,
+    alignItems: "center",
+  },
+  circleItem: { width: 80, alignItems: "center" },
+
+  generateBtn: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
   generateText: { color: COLORS.text },
 
   bgArt: {

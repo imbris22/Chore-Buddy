@@ -20,7 +20,11 @@ export default function AppNavigator() {
         <Stack.Screen name="WelcomeSetup" component={WelcomeSetupScreen} />
         <Stack.Screen name="ChoreBoard" component={ChoreBoardScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
-        <Stack.Screen name="GroceryList" component={GroceryListScreen} options={{ headerShown: false }}/>
+        <Stack.Screen
+          name="GroceryList"
+          component={GroceryListScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
