@@ -25,7 +25,7 @@ import BottomArt from "../../assets/background image.png";
 const NAV_HEIGHT = 72;
 const BG_ART_HEIGHT = 180;
 
-export default function ChoreBoardScreen() {
+export default function ChoreBoardScreen({ navigation }) {
   const {
     members,
     currentUserId,
@@ -166,7 +166,10 @@ export default function ChoreBoardScreen() {
         </Pressable>
 
         {/* Grocery List */}
-        <Pressable style={s.groceryBtn}>
+        <Pressable
+          style={s.groceryBtn}
+          onPress={() => navigation.navigate("GroceryList")}
+        >
           <Image source={GroceryIcon} style={s.groceryIcon} />
           <Text style={s.groceryText}>Grocery List</Text>
         </Pressable>
