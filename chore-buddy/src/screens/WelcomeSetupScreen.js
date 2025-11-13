@@ -20,12 +20,24 @@ import bearAvatar from "../../assets/bear.png";
 import bunnyAvatar from "../../assets/bunny.png";
 import pandaAvatar from "../../assets/panda.png";
 import catAvatar from "../../assets/cat.png";
+import dinoAvatar from "../../assets/Dino.png";
+import frogAvatar from "../../assets/frog.png";
+import dogAvatar from "../../assets/dog.png";
+import koalaAvatar from "../../assets/koala.png";
+import pigAvatar from "../../assets/pig.png";
+import sheepAvatar from "../../assets/sheep.png";
 
 const AVATARS = [
   { id: "bear", name: "Bear", image: bearAvatar },
   { id: "bunny", name: "Bunny", image: bunnyAvatar },
   { id: "panda", name: "Panda", image: pandaAvatar },
   { id: "cat", name: "Cat", image: catAvatar },
+  { id: "dino", name: "Dino", image: dinoAvatar },
+  { id: "frog", name: "Frog", image: frogAvatar },
+  { id: "dog", name: "Dog", image: dogAvatar },
+  { id: "koala", name: "Koala", image: koalaAvatar },
+  { id: "pig", name: "Pig", image: pigAvatar },
+  { id: "sheep", name: "Sheep", image: sheepAvatar },
 ];
 
 const BG_ART_HEIGHT = 180;
@@ -42,7 +54,8 @@ export default function WelcomeSetupScreen({ navigation, route }) {
       // Find the selected avatar image
       const avatarObj = AVATARS.find((a) => a.id === selectedAvatar);
 
-        // Set current user in the store
+      // Set current user in the store
+      setCurrentUser(name.trim(), avatarObj.image);
 
       // Navigate to ChoreBoard
       navigation.reset({

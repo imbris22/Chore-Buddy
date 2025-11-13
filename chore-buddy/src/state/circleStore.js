@@ -39,7 +39,7 @@ export const useCircleStore = create(
           ];
           return {
             members: updatedMembers,
-            currentUserId: newMemberId,
+            // later set the current UserId to the new member
           };
         });
       },

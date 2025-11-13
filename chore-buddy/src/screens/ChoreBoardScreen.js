@@ -177,35 +177,41 @@ export default function ChoreBoardScreen({ navigation }) {
         {/* Your Circle */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>Your Circle</Text>
-          <View style={s.circleRow}>
-            {members.map((m) => {
-              const weeklyTotal = taskList
-                .filter((t) => assignMap[t.id] === m.id)
-                .reduce((s, t) => s + (t.points || 1), 0);
-              const weeklyDone = taskList
-                .filter((t) => assignMap[t.id] === m.id)
-                .reduce(
-                  (s, t) =>
-                    s +
-                    (status[`${cycleKey}:${t.id}`] === "done"
-                      ? t.points || 1
-                      : 0),
-                  0
-                );
-              return (
-                <View key={m.id} style={s.circleItem}>
-                  <Avatar
-                    image={m.avatar}
-                    name={m.name}
-                    value={weeklyDone}
-                    max={weeklyTotal || 1}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.circleScrollContent}
+          >
+            <View style={s.circleRow}>
+              {members.map((m) => {
+                const weeklyTotal = taskList
+                  .filter((t) => assignMap[t.id] === m.id)
+                  .reduce((s, t) => s + (t.points || 1), 0);
+                const weeklyDone = taskList
+                  .filter((t) => assignMap[t.id] === m.id)
+                  .reduce(
+                    (s, t) =>
+                      s +
+                      (status[`${cycleKey}:${t.id}`] === "done"
+                        ? t.points || 1
+                        : 0),
+                    0
+                  );
+                return (
+                  <View key={m.id} style={s.circleItem}>
+                    <Avatar
+                      image={m.avatar}
+                      name={m.name}
+                      value={weeklyDone}
+                      max={weeklyTotal || 1}
                     imageOffsetY={m.id === "m_sam" || m.id === "m_bear" ? 10 : 0}
-                    imageScale={m.id === "m_bear" ? 1.2 : 1}
-                  />
-                </View>
-              );
-            })}
-          </View>
+                      imageScale={m.id === "m_bear" ? 1.2 : 1}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          </ScrollView>
         </View>
 
         <View style={{ height: BG_ART_HEIGHT + 20 }} />
