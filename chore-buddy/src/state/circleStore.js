@@ -29,6 +29,20 @@ export const useCircleStore = create(
       setTotals: (memberPoints) => set({ memberPoints }),
       setTieCursor: (tieCursor) => set({ tieCursor }),
       setRecurringNextIdx: (recurringNextIdx) => set({ recurringNextIdx }),
+      setCurrentUser: (name, avatar) => {
+        // Create a new member with the provided name and avatar
+        const newMemberId = `m_${Date.now()}`;
+        set((state) => {
+          const updatedMembers = [
+            { id: newMemberId, name, avatar },
+            ...state.members,
+          ];
+          return {
+            members: updatedMembers,
+            currentUserId: newMemberId,
+          };
+        });
+      },
     }),
     {
       name: "cb_circle",
