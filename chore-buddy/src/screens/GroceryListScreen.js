@@ -93,7 +93,13 @@ export default function GroceryListScreen({ navigation }) {
       </ScrollView>
 
       <View style={s.navWrap}>
-        <BottomNav active="Home" />
+        <BottomNav
+            active={null}
+            onTabPress={(key) => {
+            if (key === "Home") navigation.navigate("ChoreBoard");
+        }}
+/>
+
       </View>
     </View>
   );

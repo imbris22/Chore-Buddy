@@ -216,7 +216,7 @@ export default function ChoreBoardScreen({ navigation }) {
 
       {/* Bottom Navigation */}
       <View style={s.navWrap}>
-        <BottomNav active="Home" />
+        <BottomNav active="Home" onTabPress={() => {}} />
       </View>
 
       {/* Completion Modal */}

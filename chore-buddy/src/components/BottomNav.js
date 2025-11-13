@@ -39,12 +39,11 @@ export default function BottomNav({ active = "Home", onTabPress }) {
     <SafeAreaView style={s.safe} edges={["bottom"]}>
       <View style={s.bar}>
         {TABS.map((tab) => {
-          const isActive = tab.key === active;
+          const isActive = active === tab.key;   // supports null cleanly
           return (
             <Pressable
               key={tab.key}
               style={s.item}
-              // When you add navigation later, pass onTabPress={(k)=>navigation.navigate(k)}
               onPress={() => onTabPress?.(tab.key)}
             >
               <Image
@@ -85,5 +84,5 @@ const s = StyleSheet.create({
   icon: { width: 24, height: 24, opacity: 0.55 },
   iconActive: { opacity: 1 },
   label: { fontSize: 12, color: "#C6B7A6", fontFamily: "Kantumruy" },
-  labelActive: { color: COLORS.text, fontWeight: "500", fontFamily: "Kantumruy" }, // brown active
+  labelActive: { color: COLORS.text, fontWeight: "500", fontFamily: "Kantumruy" },
 });
