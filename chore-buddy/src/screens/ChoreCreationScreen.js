@@ -139,14 +139,16 @@ export default function AddChoreScreen({ navigation }) {
               <Image source={Logo} style={s.logoImg} resizeMode="contain" />
               <Text style={s.logoText}>Chore Buddy</Text>
             </View>
-            <Pressable onPress={handleClosePress} style={s.closeBtn}>
-              <Text style={s.closeText}>✕</Text>
-            </Pressable>
           </View>
         </View>
 
         {/* Title */}
-        <Text style={s.title}>Add New Chore</Text>
+        <View style={s.titleRow}>
+          <Text style={s.headerTitle}>Add New Chore</Text>
+          <Pressable onPress={() => navigation.goBack()} style={s.closeBtn}>
+            <Text style={s.closeText}>×</Text>
+          </Pressable>
+        </View>
         <Text style={s.subtitle}>Create a new chore for your circle</Text>
 
         {/* Chore Name */}
@@ -313,7 +315,10 @@ function IconButton({ selected, onPress, icon }) {
 
 function TogglePill({ label, active, onPress }) {
   return (
-    <Pressable onPress={onPress} style={[s.freqPill, active && s.freqPillActive]}>
+    <Pressable
+      onPress={onPress}
+      style={[s.freqPill, active && s.freqPillActive]}
+    >
       <Text style={[s.freqText, active && s.freqTextActive]}>{label}</Text>
     </Pressable>
   );
@@ -355,9 +360,24 @@ const s = StyleSheet.create({
     fontFamily: "Jersey",
     marginLeft: -14,
   },
-  closeBtn: {
-    padding: 8,
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
   },
+  headerTitle: {
+    fontSize: 24,
+    fontFamily: "Jersey",
+    color: COLORS.text,
+  },
+  closeBtn: {
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   closeText: {
     fontSize: 20,
     color: COLORS.text,
