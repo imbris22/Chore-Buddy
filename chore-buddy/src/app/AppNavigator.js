@@ -7,6 +7,7 @@ import HistoryScreen from "../screens/HistoryScreen";
 import JoinCircleScreen from "../screens/JoinCircleScreen";
 import WelcomeSetupScreen from "../screens/WelcomeSetupScreen";
 import RankingsScreen from "../screens/RankingsScreen";
+import ChoreCreation from "../screens/ChoreCreationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function AppNavigator() {
         <Stack.Screen name="JoinCircle" component={JoinCircleScreen} />
         <Stack.Screen name="WelcomeSetup" component={WelcomeSetupScreen} />
         <Stack.Screen name="ChoreBoard" component={ChoreBoardScreen} />
+        <Stack.Screen name="ChoreCreation" component={ChoreCreation} />
         <Stack.Screen name="History" component={HistoryScreen} />
         <Stack.Screen
           name="GroceryList"
