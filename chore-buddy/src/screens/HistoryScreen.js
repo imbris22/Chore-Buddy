@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import { useTasksStore } from "../state/tasksStore"; // store should export useTasksStore
 import { useCircleStore } from "../state/circleStore";
 import BottomNav from "../components/BottomNav";
+const clockAsset = require("../../assets/history-icons/clock_history.svg");
+const zapAsset = require("../../assets/history-icons/zap.svg");
 
 const logo = require("../../assets/logo.png");
 
@@ -111,7 +114,12 @@ export default function HistoryScreen({ navigation }) {
       >
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerIcon}>⏱️</Text>
+            <SvgUri
+              width={20}
+              height={20}
+              uri={Image.resolveAssetSource(clockAsset).uri}
+              style={styles.headerIcon}
+            />
             <Text style={styles.headerTitle}>History</Text>
           </View>
           <TouchableOpacity
@@ -130,7 +138,12 @@ export default function HistoryScreen({ navigation }) {
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Weekly Streak</Text>
             <View style={styles.streakRow}>
-              <Text style={styles.streakIcon}>⚡</Text>
+              <SvgUri
+                width={18}
+                height={18}
+                uri={Image.resolveAssetSource(zapAsset).uri}
+                style={styles.streakIcon}
+              />
               <Text style={styles.metricValue}>{streak}</Text>
             </View>
           </View>
@@ -196,7 +209,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   headerLeft: { flexDirection: "row", alignItems: "center" },
-  headerIcon: { fontSize: 20, marginRight: 8 },
+  headerIcon: { width: 20, height: 20, marginRight: 8 },
   headerTitle: { fontSize: 20, color: COLORS.text, fontFamily: "Kantumruy" },
   closeBtn: { padding: 8 },
   closeX: { fontSize: 20, color: COLORS.text },
@@ -217,7 +230,7 @@ const styles = StyleSheet.create({
   metricValue: { color: COLORS.text, fontFamily: "Kantumruy", fontSize: 20 },
 
   streakRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  streakIcon: { fontSize: 18, marginRight: 6 },
+  streakIcon: { width: 18, height: 18, marginRight: 6 },
 
   weekSection: { marginTop: 10 },
   weekLabel: { color: COLORS.text, fontFamily: "Kantumruy", marginBottom: 8 },
