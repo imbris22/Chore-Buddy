@@ -166,10 +166,7 @@ export default function RankingsScreen({ navigation }) {
               onPress={() => setScope("weekly")}
             >
               <Text
-                style={[
-                  s.tabLabel,
-                  scope === "weekly" && s.tabLabelActive,
-                ]}
+                style={[s.tabLabel, scope === "weekly" && s.tabLabelActive]}
               >
                 Weekly
               </Text>
@@ -179,10 +176,7 @@ export default function RankingsScreen({ navigation }) {
               onPress={() => setScope("monthly")}
             >
               <Text
-                style={[
-                  s.tabLabel,
-                  scope === "monthly" && s.tabLabelActive,
-                ]}
+                style={[s.tabLabel, scope === "monthly" && s.tabLabelActive]}
               >
                 Monthly
               </Text>
@@ -191,12 +185,7 @@ export default function RankingsScreen({ navigation }) {
               style={[s.tab, scope === "all" && s.tabActive]}
               onPress={() => setScope("all")}
             >
-              <Text
-                style={[
-                  s.tabLabel,
-                  scope === "all" && s.tabLabelActive,
-                ]}
-              >
+              <Text style={[s.tabLabel, scope === "all" && s.tabLabelActive]}>
                 All-time
               </Text>
             </Pressable>
@@ -224,6 +213,7 @@ export default function RankingsScreen({ navigation }) {
             if (key === "Home") navigation.navigate("ChoreBoard");
             if (key === "History") navigation.navigate("History");
             if (key === "Rankings") navigation.navigate("Rankings");
+            if (key === "Profile") navigation.navigate("Profile");
           }}
         />
       </View>
