@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flexDirection: "row", alignItems: "center" },
   headerIcon: { width: 20, height: 20, marginRight: 8 },
-  headerTitle: { fontSize: 20, color: COLORS.text, fontFamily: "Kantumruy" },
+  headerTitle: { fontSize: 22, color: COLORS.text, fontFamily: "Jersey" },
   closeBtn: { padding: 8 },
   closeX: { fontSize: 20, color: COLORS.text },
 
