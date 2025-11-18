@@ -14,6 +14,7 @@ import BottomNav from "../components/BottomNav";
 import { useTasksStore } from "../state/tasksStore";
 import { useCircleStore } from "../state/circleStore";
 import { currentWeek } from "../lib/cycle";
+import LeaveChoreModal from "../components/LeaveChoreModal";
 
 import Logo from "../../assets/logo.png";
 import TrashIcon from "../../assets/chore-icons/trash-2.png";
@@ -31,6 +32,10 @@ export default function AddChoreScreen({ navigation }) {
   const [assignToMe, setAssignToMe] = React.useState(false);
   const [iconKey, setIconKey] = React.useState(null); // "trash" | "brush" | "utensils" | "basket"
 
+  const [isDirty, setIsDirty] = React.useState(false);
+  const [showLeaveModal, setShowLeaveModal] = React.useState(false);
+  const [pendingAction, setPendingAction] = React.useState(null);
+
   // Use separate selectors so each snapshot is simple and stable
   const addChore = useTasksStore((s) => s.addChore);
   const assignments = useTasksStore((s) => s.assignments);
@@ -45,11 +50,34 @@ export default function AddChoreScreen({ navigation }) {
     basket: BasketIcon,
   };
 
+  const markDirty = () => {
+    if (!isDirty) setIsDirty(true);
+  };
+
+  const requestLeave = (action) => {
+    setPendingAction(() => action);
+    setShowLeaveModal(true);
+  };
+
+  const handleClosePress = () => {
+    if (!isDirty) {
+      return navigation.goBack();
+    }
+    requestLeave(() => navigation.goBack());
+  };
+
   const handleTabPress = (key) => {
-    if (key === "History") return navigation.navigate("History");
-    if (key === "Home") return navigation.navigate("ChoreBoard");
-    if (key === "Rankings") return navigation.navigate("Rankings");
-    if (key === "Profile") return navigation.navigate("Profile");
+    const doNav = () => {
+      if (key === "History") return navigation.navigate("History");
+      if (key === "Home") return navigation.navigate("ChoreBoard");
+      if (key === "Rankings") return navigation.navigate("Rankings");
+      if (key === "Profile") return navigation.navigate("Profile");
+    };
+
+    if (!isDirty) {
+      return doNav();
+    }
+    requestLeave(doNav);
   };
 
   const handleCreate = () => {
@@ -83,6 +111,20 @@ export default function AddChoreScreen({ navigation }) {
     navigation.goBack();
   };
 
+  const handleConfirmLeave = () => {
+    setShowLeaveModal(false);
+    const action = pendingAction;
+    setPendingAction(null);
+    if (action) {
+      action();
+    }
+  };
+
+  const handleCancelLeave = () => {
+    setShowLeaveModal(false);
+    setPendingAction(null);
+  };
+
   return (
     <View style={s.wrap}>
       <ScrollView
@@ -97,7 +139,7 @@ export default function AddChoreScreen({ navigation }) {
               <Image source={Logo} style={s.logoImg} resizeMode="contain" />
               <Text style={s.logoText}>Chore Buddy</Text>
             </View>
-            <Pressable onPress={() => navigation.goBack()} style={s.closeBtn}>
+            <Pressable onPress={handleClosePress} style={s.closeBtn}>
               <Text style={s.closeText}>✕</Text>
             </Pressable>
           </View>
@@ -115,7 +157,10 @@ export default function AddChoreScreen({ navigation }) {
             placeholder="e.g., Wash the dishes"
             placeholderTextColor="rgba(74, 55, 38, 0.4)"
             value={name}
-            onChangeText={setName}
+            onChangeText={(text) => {
+              markDirty();
+              setName(text);
+            }}
           />
         </View>
 
@@ -124,22 +169,34 @@ export default function AddChoreScreen({ navigation }) {
         <View style={s.iconRow}>
           <IconButton
             selected={iconKey === "trash"}
-            onPress={() => setIconKey("trash")}
+            onPress={() => {
+              markDirty();
+              setIconKey("trash");
+            }}
             icon={TrashIcon}
           />
           <IconButton
             selected={iconKey === "brush"}
-            onPress={() => setIconKey("brush")}
+            onPress={() => {
+              markDirty();
+              setIconKey("brush");
+            }}
             icon={BrushIcon}
           />
           <IconButton
             selected={iconKey === "utensils"}
-            onPress={() => setIconKey("utensils")}
+            onPress={() => {
+              markDirty();
+              setIconKey("utensils");
+            }}
             icon={UtensilsIcon}
           />
           <IconButton
             selected={iconKey === "basket"}
-            onPress={() => setIconKey("basket")}
+            onPress={() => {
+              markDirty();
+              setIconKey("basket");
+            }}
             icon={BasketIcon}
           />
         </View>
@@ -153,7 +210,10 @@ export default function AddChoreScreen({ navigation }) {
             maximumValue={5}
             step={1}
             value={difficulty}
-            onValueChange={(v) => setDifficulty(v)}
+            onValueChange={(v) => {
+              markDirty();
+              setDifficulty(v);
+            }}
             minimumTrackTintColor="#FFC7D3"
             maximumTrackTintColor="#F3C99A"
             thumbTintColor="#FFFFFF"
@@ -173,27 +233,48 @@ export default function AddChoreScreen({ navigation }) {
           <TogglePill
             label="Daily"
             active={frequency === "daily"}
-            onPress={() => setFrequency("daily")}
+            onPress={() => {
+              markDirty();
+              setFrequency("daily");
+            }}
           />
           <TogglePill
             label="Weekly"
             active={frequency === "weekly"}
-            onPress={() => setFrequency("weekly")}
+            onPress={() => {
+              markDirty();
+              setFrequency("weekly");
+            }}
           />
           <TogglePill
             label="Monthly"
             active={frequency === "monthly"}
-            onPress={() => setFrequency("monthly")}
+            onPress={() => {
+              markDirty();
+              setFrequency("monthly");
+            }}
           />
         </View>
 
         {/* Checkboxes */}
         <View style={s.checkboxRow}>
-          <Checkbox checked={recurring} onPress={() => setRecurring((v) => !v)} />
+          <Checkbox
+            checked={recurring}
+            onPress={() => {
+              markDirty();
+              setRecurring((v) => !v);
+            }}
+          />
           <Text style={s.checkboxLabel}>Recurring chore</Text>
         </View>
         <View style={s.checkboxRow}>
-          <Checkbox checked={assignToMe} onPress={() => setAssignToMe((v) => !v)} />
+          <Checkbox
+            checked={assignToMe}
+            onPress={() => {
+              markDirty();
+              setAssignToMe((v) => !v);
+            }}
+          />
           <Text style={s.checkboxLabel}>Assign to me</Text>
         </View>
 
@@ -209,6 +290,12 @@ export default function AddChoreScreen({ navigation }) {
       <View style={s.navWrap}>
         <BottomNav active="Home" onTabPress={handleTabPress} />
       </View>
+
+      <LeaveChoreModal
+        visible={showLeaveModal}
+        onConfirm={handleConfirmLeave}
+        onCancel={handleCancelLeave}
+      />
     </View>
   );
 }
