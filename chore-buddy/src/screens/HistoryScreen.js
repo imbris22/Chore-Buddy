@@ -101,17 +101,18 @@ export default function HistoryScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <View style={styles.brand}>
-          <Image source={logo} style={styles.brandLogo} />
-          <Text style={styles.brandText}>Chore Buddy</Text>
-        </View>
-      </View>
-
       <ScrollView
+        style={styles.scrollContainer}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* Rankings-style header (moved inside ScrollView to match RankingsScreen spacing) */}
+        <View style={styles.header}>
+          <View style={styles.logoRow}>
+            <Image source={logo} style={styles.logoImg} resizeMode="contain" />
+            <Text style={styles.logoText}>Chore Buddy</Text>
+          </View>
+        </View>
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
             <SvgUri
@@ -185,23 +186,31 @@ export default function HistoryScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FEF7F0" },
+  scrollContainer: { flex: 1 },
   navWrap: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
   },
-  topBar: {
-    backgroundColor: "#BEEBEF",
-    paddingTop: 20,
-    paddingBottom: 14,
-    paddingHorizontal: 16,
+  header: {
+    backgroundColor: COLORS.secondary,
+    borderRadius: 16,
+    justifyContent: "center",
+    width: "100%",
+    height: 88,
+    marginBottom: 16,
   },
-  brand: { flexDirection: "row", alignItems: "center" },
-  brandLogo: { width: 40, height: 40, marginRight: 12, resizeMode: "contain" },
-  brandText: { fontSize: 20, color: "#3B2F2A", fontFamily: "Jersey" },
+  logoRow: { flexDirection: "row", alignItems: "center" },
+  logoImg: { width: 120, height: 120, marginLeft: -16 },
+  logoText: {
+    color: COLORS.text,
+    fontSize: 28,
+    fontFamily: "Jersey",
+    marginLeft: -14,
+  },
 
-  content: { padding: 16 },
+  content: { paddingHorizontal: 16, paddingTop: 24, paddingBottom: 24 },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
