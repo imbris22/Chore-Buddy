@@ -59,11 +59,13 @@ export default function ChoreBoardScreen({ navigation }) {
   const cycleKey = week.startISO;
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
 
-  const [generated, setGenerated] = React.useState(
-    Boolean(assignments[cycleKey])
-  );
   const assignMap = assignments[cycleKey] || {};
   const taskList = React.useMemo(() => Object.values(chores), [chores]);
+
+  const hasAssignments = React.useMemo(
+    () => Object.keys(assignMap).length > 0,
+    [assignMap]
+  );
 
   const myTasks = React.useMemo(
     () => taskList.filter((t) => assignMap[t.id] === myMember.id),
@@ -121,7 +123,6 @@ export default function ChoreBoardScreen({ navigation }) {
     setTotals(state.memberPoints);
     setTieCursor(state.tieCursor);
     setRecurringNextIdx(state.recurringNextIdx);
-    setGenerated(true);
   };
 
   return (
@@ -148,7 +149,7 @@ export default function ChoreBoardScreen({ navigation }) {
 
         {/* Task cards (tap opens modal) */}
         <View style={s.row}>
-          {generated ? (
+          {hasAssignments ? (
             myTasks.length ? (
               myTasks.map((t) => (
                 <ChoreCard
@@ -176,7 +177,10 @@ export default function ChoreBoardScreen({ navigation }) {
         </View>
 
         {/* Add Chore */}
-        <Pressable style={s.addBtn}>
+        <Pressable
+          style={s.addBtn}
+          onPress={() => navigation.navigate("ChoreCreation")}
+        >
           <Text style={s.addText}>+ Add Chore</Text>
         </Pressable>
 
@@ -331,7 +335,7 @@ const s = StyleSheet.create({
     marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F1C6D2",
+    backgroundColor: "#FFC7D3",
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,

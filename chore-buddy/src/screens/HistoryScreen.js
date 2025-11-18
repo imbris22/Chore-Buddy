@@ -7,10 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import { useTasksStore } from "../state/tasksStore"; // store should export useTasksStore
 import { useCircleStore } from "../state/circleStore";
 import BottomNav from "../components/BottomNav";
+const clockAsset = require("../../assets/history-icons/clock_history.svg");
+const zapAsset = require("../../assets/history-icons/zap.svg");
 
 const logo = require("../../assets/logo.png");
 
@@ -98,20 +101,26 @@ export default function HistoryScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <View style={styles.brand}>
-          <Image source={logo} style={styles.brandLogo} />
-          <Text style={styles.brandText}>Chore Buddy</Text>
-        </View>
-      </View>
-
       <ScrollView
+        style={styles.scrollContainer}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* Rankings-style header (moved inside ScrollView to match RankingsScreen spacing) */}
+        <View style={styles.header}>
+          <View style={styles.logoRow}>
+            <Image source={logo} style={styles.logoImg} resizeMode="contain" />
+            <Text style={styles.logoText}>Chore Buddy</Text>
+          </View>
+        </View>
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerIcon}>⏱️</Text>
+            <SvgUri
+              width={20}
+              height={20}
+              uri={Image.resolveAssetSource(clockAsset).uri}
+              style={styles.headerIcon}
+            />
             <Text style={styles.headerTitle}>History</Text>
           </View>
           <TouchableOpacity
@@ -130,7 +139,12 @@ export default function HistoryScreen({ navigation }) {
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Weekly Streak</Text>
             <View style={styles.streakRow}>
-              <Text style={styles.streakIcon}>⚡</Text>
+              <SvgUri
+                width={18}
+                height={18}
+                uri={Image.resolveAssetSource(zapAsset).uri}
+                style={styles.streakIcon}
+              />
               <Text style={styles.metricValue}>{streak}</Text>
             </View>
           </View>
@@ -172,23 +186,31 @@ export default function HistoryScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FEF7F0" },
+  scrollContainer: { flex: 1 },
   navWrap: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
   },
-  topBar: {
-    backgroundColor: "#BEEBEF",
-    paddingTop: 20,
-    paddingBottom: 14,
-    paddingHorizontal: 16,
+  header: {
+    backgroundColor: COLORS.secondary,
+    borderRadius: 16,
+    justifyContent: "center",
+    width: "100%",
+    height: 88,
+    marginBottom: 16,
   },
-  brand: { flexDirection: "row", alignItems: "center" },
-  brandLogo: { width: 40, height: 40, marginRight: 12, resizeMode: "contain" },
-  brandText: { fontSize: 20, color: "#3B2F2A", fontFamily: "Jersey" },
+  logoRow: { flexDirection: "row", alignItems: "center" },
+  logoImg: { width: 120, height: 120, marginLeft: -16 },
+  logoText: {
+    color: COLORS.text,
+    fontSize: 28,
+    fontFamily: "Jersey",
+    marginLeft: -14,
+  },
 
-  content: { padding: 16 },
+  content: { paddingHorizontal: 16, paddingTop: 24, paddingBottom: 24 },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -196,7 +218,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   headerLeft: { flexDirection: "row", alignItems: "center" },
-  headerIcon: { fontSize: 20, marginRight: 8 },
+  headerIcon: { width: 20, height: 20, marginRight: 8 },
   headerTitle: { fontSize: 20, color: COLORS.text, fontFamily: "Kantumruy" },
   closeBtn: { padding: 8 },
   closeX: { fontSize: 20, color: COLORS.text },
@@ -217,7 +239,7 @@ const styles = StyleSheet.create({
   metricValue: { color: COLORS.text, fontFamily: "Kantumruy", fontSize: 20 },
 
   streakRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  streakIcon: { fontSize: 18, marginRight: 6 },
+  streakIcon: { width: 18, height: 18, marginRight: 6 },
 
   weekSection: { marginTop: 10 },
   weekLabel: { color: COLORS.text, fontFamily: "Kantumruy", marginBottom: 8 },
