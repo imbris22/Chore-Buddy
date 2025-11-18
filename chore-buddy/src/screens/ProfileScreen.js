@@ -21,6 +21,15 @@ const PinkStarIcon = require("../../assets/pink-star.svg");
 const CheckIcon = require("../../assets/square-check-big.svg");
 const LogOutIcon = require("../../assets/log-out.svg");
 
+// helper: normalize date to week start (Monday)
+function weekStartDate(d) {
+  const dt = new Date(d);
+  const day = (dt.getDay() + 6) % 7;
+  const start = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - day);
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
 const NAV_HEIGHT = 72;
 
 export default function ProfileScreen({ navigation }) {
@@ -41,8 +50,27 @@ export default function ProfileScreen({ navigation }) {
   const totalPoints = memberPoints[currentUserId] || 0;
   const choresDone = myHistory.length;
 
-  // Calculate week streak (simplified - count consecutive weeks with chores)
-  const weekStreak = myHistory.length > 0 ? 6 : 0; // placeholder
+  // Calculate week streak (same logic as HistoryScreen)
+  const weekStreak = React.useMemo(() => {
+    if (myHistory.length === 0) return 0;
+    // build set of weekStart timestamps
+    const weeks = new Map();
+    myHistory.forEach((c) => {
+      const dateVal =
+        c.ts || c.time || c.date || c.completedAt || c.completed_at;
+      const date = dateVal ? new Date(dateVal) : new Date();
+      const ws = weekStartDate(date).getTime();
+      if (!weeks.has(ws)) weeks.set(ws, true);
+    });
+    const present = new Set(weeks.keys());
+    let count = 0;
+    let cursor = +weekStartDate(new Date());
+    while (present.has(cursor)) {
+      count++;
+      cursor -= 7 * 24 * 60 * 60 * 1000;
+    }
+    return count;
+  }, [myHistory]);
 
   // Calculate rank (simplified - assume top based on points)
   const rank = 1; // placeholder
@@ -103,7 +131,7 @@ export default function ProfileScreen({ navigation }) {
                 uri={Image.resolveAssetSource(ZapIcon).uri}
               />
               <Text style={s.statValue}>{weekStreak}</Text>
-              <Text style={s.statLabel}>Week Streak</Text>
+              <Text style={s.statLabel}>Weekly Streak</Text>
             </View>
 
             <View style={s.statBox}>
