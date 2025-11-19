@@ -41,7 +41,7 @@ const AVATARS = [
   { id: "sheep", name: "Sheep", image: sheepAvatar },
 ];
 
-const BG_ART_HEIGHT = 180;
+const BG_ART_HEIGHT = 500;
 
 export default function WelcomeSetupScreen({ navigation, route }) {
   const { circleCode } = route.params || {};
@@ -236,14 +236,14 @@ const s = StyleSheet.create({
 
   avatarTitle: {
     color: COLORS.text,
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: "Jersey",
     marginBottom: 4,
   },
 
   avatarSubtitle: {
     color: COLORS.text,
-    fontSize: 12,
+    fontSize: 14,
     opacity: 0.6,
     fontFamily: "Kantumruy",
     marginBottom: 16,
@@ -286,13 +286,13 @@ const s = StyleSheet.create({
   },
 
   avatarImage: {
-    width: 80,
-    height: 80,
+    width: 150,
+    height: 150,
   },
 
   avatarImageSelected: {
-    width: 90,
-    height: 90,
+    width: 160,
+    height: 160,
   },
 
   continueBtn: {

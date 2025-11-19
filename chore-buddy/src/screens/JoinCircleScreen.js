@@ -14,7 +14,7 @@ import COLORS from "../theme/colors";
 import Logo from "../../assets/logo.png";
 import BottomArt from "../../assets/background image.png";
 
-const BG_ART_HEIGHT = 180;
+const BG_ART_HEIGHT = 500;
 
 export default function JoinCircleScreen({ navigation }) {
   const [circleCode, setCircleCode] = React.useState("");
