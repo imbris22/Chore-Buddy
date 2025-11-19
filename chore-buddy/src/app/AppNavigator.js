@@ -17,7 +17,7 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="ChoreBoard"
+        initialRouteName="JoinCircle"
       >
         <Stack.Screen name="JoinCircle" component={JoinCircleScreen} />
         <Stack.Screen name="WelcomeSetup" component={WelcomeSetupScreen} />

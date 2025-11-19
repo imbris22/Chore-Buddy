@@ -9,6 +9,9 @@ import alexAvatar from "../../assets/bunny.png";
 import samAvatar from "../../assets/panda.png";
 import jordanAvatar from "../../assets/cat.png";
 
+import { assignTasks } from "../lib/allocator";
+import { useTasksStore } from "./tasksStore";
+
 export const useCircleStore = create(
   persist(
     (set, get) => ({
@@ -29,17 +32,35 @@ export const useCircleStore = create(
       setTieCursor: (tieCursor) => set({ tieCursor }),
       setRecurringNextIdx: (recurringNextIdx) => set({ recurringNextIdx }),
       setCurrentUser: (name, avatar) => {
-        // Create a new member with the provided name and avatar
         const newMemberId = `m_${Date.now()}`;
         set((state) => {
           const updatedMembers = [
             { id: newMemberId, name, avatar },
             ...state.members,
           ];
+
+          const { chores, upsertAssignments } = useTasksStore.getState();
+          const taskList = Object.values(chores);
+
+          const { assignments, state: newState } = assignTasks(
+            updatedMembers,
+            taskList,
+            {
+              memberPoints: state.memberPoints,
+              tieCursor: state.tieCursor,
+              recurringNextIdx: state.recurringNextIdx,
+            }
+          );
+
+          const cycleKey = new Date().toISOString().split("T")[0]; // Use current date as cycle key
+          upsertAssignments(cycleKey, assignments);
+
           return {
             members: updatedMembers,
-            // later set the current UserId to the new member
             currentUserId: newMemberId,
+            memberPoints: newState.memberPoints,
+            tieCursor: newState.tieCursor,
+            recurringNextIdx: newState.recurringNextIdx,
           };
         });
       },

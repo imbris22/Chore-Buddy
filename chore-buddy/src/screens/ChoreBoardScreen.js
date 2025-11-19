@@ -54,7 +54,7 @@ export default function ChoreBoardScreen({ navigation }) {
   } = useTasksStore();
 
   const week = currentWeek();
-  const cycleKey = week.startISO;
+  const cycleKey = new Date().toISOString().split("T")[0]; // Match the format used in upsertAssignments
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
 
   const assignMap = assignments[cycleKey] || {};
@@ -85,7 +85,6 @@ export default function ChoreBoardScreen({ navigation }) {
 
   const openComplete = (task) => {
     const pairKey = `${cycleKey}:${task.id}`;
-    console.log("Tapped task:", task.id, "status:", status[pairKey]); // DEBUG
     if (status[pairKey] === "done") return;
     setSelectedTask(task);
     setModalOpen(true);
@@ -111,17 +110,33 @@ export default function ChoreBoardScreen({ navigation }) {
     setModalOpen(false);
   };
 
-  const generateWeek = () => {
-    const { assignments: map, state } = assignTasks(members, taskList, {
-      memberPoints,
-      tieCursor,
-      recurringNextIdx,
-    });
-    upsertAssignments(cycleKey, map);
-    setTotals(state.memberPoints);
-    setTieCursor(state.tieCursor);
-    setRecurringNextIdx(state.recurringNextIdx);
-  };
+  React.useEffect(() => {
+    if (!hasAssignments) {
+      const { assignments: map, state } = assignTasks(members, taskList, {
+        memberPoints,
+        tieCursor,
+        recurringNextIdx,
+      });
+      upsertAssignments(cycleKey, map);
+      setTotals(state.memberPoints);
+      setTieCursor(state.tieCursor);
+      setRecurringNextIdx(state.recurringNextIdx);
+    }
+  }, [
+    hasAssignments,
+    members,
+    taskList,
+    cycleKey,
+    memberPoints,
+    tieCursor,
+    recurringNextIdx,
+    upsertAssignments,
+    setTotals,
+    setTieCursor,
+    setRecurringNextIdx,
+  ]);
+
+  // debugInfo removed
 
   return (
     <View style={s.wrap}>
@@ -171,11 +186,7 @@ export default function ChoreBoardScreen({ navigation }) {
             ) : (
               <Text style={s.empty}>No chores assigned.</Text>
             )
-          ) : (
-            <Pressable onPress={generateWeek} style={s.generateBtn}>
-              <Text style={s.generateText}>Generate Week</Text>
-            </Pressable>
-          )}
+          ) : null}
         </View>
 
         {/* Progress summary */}
@@ -381,12 +392,4 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   circleItem: { width: 80, alignItems: "center" },
-
-  generateBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-  },
-  generateText: { color: COLORS.text },
 });

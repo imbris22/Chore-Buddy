@@ -89,7 +89,9 @@ export const useTasksStore = create(
         })),
 
       upsertAssignments: (cycleStartISO, map) =>
-        set((s) => ({ assignments: { ...s.assignments, [cycleStartISO]: map } })),
+        set((s) => ({
+          assignments: { ...s.assignments, [cycleStartISO]: map },
+        })),
 
       setStatus: (pairKey, val) =>
         set((s) => ({ status: { ...s.status, [pairKey]: val } })),
