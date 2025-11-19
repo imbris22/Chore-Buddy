@@ -170,7 +170,16 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
 
-          <Pressable style={s.menuItem}>
+          <Pressable
+            style={s.menuItem}
+            onPress={() => {
+              useCircleStore.getState().leaveCircle();
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "JoinCircle" }],
+              });
+            }}
+          >
             <View style={s.leaveIcon}>
               <SvgUri
                 width={20}

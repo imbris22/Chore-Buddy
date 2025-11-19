@@ -64,6 +64,18 @@ export const useCircleStore = create(
           };
         });
       },
+      leaveCircle: () => {
+        // Remove current user from members
+        set((state) => {
+          const updatedMembers = state.members.filter(
+            (m) => m.id !== state.currentUserId
+          );
+          return {
+            members: updatedMembers,
+            currentUserId: null,
+          };
+        });
+      },
     }),
     {
       name: "cb_circle",
