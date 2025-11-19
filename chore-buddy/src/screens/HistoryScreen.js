@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: { color: COLORS.text, fontFamily: "Kantumruy" },
-  metricValue: { color: COLORS.text, fontFamily: "Kantumruy", fontSize: 20 },
+  metricValue: { color: COLORS.text, fontFamily: "Jersey", fontSize: 24 },
 
   streakRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   streakIcon: { width: 18, height: 18, marginRight: 6 },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemTitle: { color: COLORS.text, fontFamily: "Kantumruy" },
-  itemPoints: { color: COLORS.text, fontFamily: "Kantumruy", fontWeight: "700" },
+  itemPoints: { color: COLORS.text, fontFamily: "Jersey", fontWeight: "700", fontSize: 20 },
 
   empty: { color: COLORS.text, fontFamily: "Kantumruy", marginTop: 20 },
 });
