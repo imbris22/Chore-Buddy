@@ -20,10 +20,8 @@ import CompleteChoreModal from "../components/CompleteChoreModal";
 
 import Logo from "../../assets/logo.png";
 import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
-import BottomArt from "../../assets/background image.png";
 
 const NAV_HEIGHT = 72;
-const BG_ART_HEIGHT = 180;
 
 export default function ChoreBoardScreen({ navigation }) {
   // handle bottom nav presses from this screen (same pattern as GroceryList button)
@@ -151,13 +149,25 @@ export default function ChoreBoardScreen({ navigation }) {
         <View style={s.row}>
           {hasAssignments ? (
             myTasks.length ? (
-              myTasks.map((t) => (
-                <ChoreCard
-                  key={t.id}
-                  chore={t}
-                  onPress={() => openComplete(t)}
-                />
-              ))
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={s.rowContent}
+              >
+                {myTasks.map((t) => {
+                  const pairKey = `${cycleKey}:${t.id}`;
+                  const isDone = status[pairKey] === "done";
+
+                  return (
+                    <ChoreCard
+                      key={t.id}
+                      chore={t}
+                      isDone={isDone}
+                      onPress={() => openComplete(t)}
+                    />
+                  );
+                })}
+              </ScrollView>
             ) : (
               <Text style={s.empty}>No chores assigned.</Text>
             )
@@ -235,16 +245,8 @@ export default function ChoreBoardScreen({ navigation }) {
           </ScrollView>
         </View>
 
-        <View style={{ height: BG_ART_HEIGHT + 20 }} />
+        <View style={{ height: 20 }} />
       </ScrollView>
-
-      {/* Bottom Background Characters (can't intercept touches now) */}
-      <Image
-        source={BottomArt}
-        style={s.bgArt}
-        resizeMode="contain"
-        pointerEvents="none"
-      />
 
       {/* Bottom Navigation */}
       <View style={s.navWrap}>
@@ -307,7 +309,13 @@ const s = StyleSheet.create({
   },
   testBtnText: { color: "#333" },
 
-  row: { flexDirection: "row", gap: 12, flexWrap: "wrap" },
+  row: { marginBottom: 0 },
+
+  rowContent: {
+    flexDirection: "row",
+    gap: 0,
+    paddingRight: 4,
+  },
 
   empty: { color: COLORS.text },
 
@@ -381,15 +389,4 @@ const s = StyleSheet.create({
     borderRadius: 12,
   },
   generateText: { color: COLORS.text },
-
-  bgArt: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: NAV_HEIGHT + 4,
-    height: BG_ART_HEIGHT,
-    width: "100%",
-    opacity: 0.5,
-    zIndex: 1,
-  },
 });

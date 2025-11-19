@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import COLORS from "../theme/colors";
 
-export default function ChoreCard({ chore, ...props }) {
+export default function ChoreCard({ chore, isDone = false, ...props }) {
   // defensive: if chore is missing, don't crash UI
   if (!chore) {
     console.warn("ChoreCard rendered with undefined chore");
@@ -10,26 +10,97 @@ export default function ChoreCard({ chore, ...props }) {
   }
 
   return (
-    <TouchableOpacity style={styles.card} {...props}>
-      {chore.icon ? (
-        <Image source={chore.icon} style={styles.icon} />
-      ) : (
-        <View style={styles.iconPlaceholder} />
-      )}
-      <Text style={styles.title}>{chore.title ?? "Untitled"}</Text>
-      <Text style={styles.points}>{chore.points} pts</Text>
+    <TouchableOpacity
+      style={[styles.wrap, isDone && styles.wrapDone]}
+      disabled={isDone}
+      {...props}
+    >
+      <View style={[styles.iconBox, isDone && styles.iconBoxDone]}>
+        {chore.icon ? (
+          <Image
+            source={chore.icon}
+            style={[styles.icon, isDone && styles.iconDone]}
+          />
+        ) : (
+          <View style={[styles.iconPlaceholder, isDone && styles.iconPlaceholderDone]} />
+        )}
+      </View>
+
+      <Text style={[styles.title, isDone && styles.titleDone]}>
+        {chore.title ?? "Untitled"}
+      </Text>
+      <Text style={[styles.points, isDone && styles.pointsDone]}>
+        {chore.points} pts
+      </Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    width: 92, height: 96, borderRadius: 12,
-    backgroundColor: COLORS.card, borderWidth: 1, borderColor: COLORS.border,
-    alignItems: "center", justifyContent: "center", gap: 4
+  wrap: {
+    width: 92,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 4,
+    paddingBottom: 4,
   },
-  icon: { width: 32, height: 32, marginBottom: 6, resizeMode: "contain" },
-  title: { color: COLORS.text, fontFamily: "Kantumruy" },
-  points: { color: COLORS.text, opacity: 0.7, fontSize: 12, fontFamily: "Kantumruy" },
-  iconPlaceholder: { backgroundColor: COLORS.border, borderRadius: 12, width: 24, height: 24, alignItems: "center", justifyContent: "center" },
+  wrapDone: {
+    opacity: 0.5,
+  },
+
+  iconBox: {
+    width: 65,
+    height: 65,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "#F5C6D4",
+    backgroundColor: "#FFF8F1",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  iconBoxDone: {
+    borderColor: "#E0D4CF",
+    backgroundColor: "#F3ECE5",
+  },
+
+  icon: {
+    width: 32,
+    height: 32,
+    resizeMode: "contain",
+  },
+  iconDone: {
+    tintColor: "#A9A9A9",
+  },
+
+  iconPlaceholder: {
+    backgroundColor: COLORS.border,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconPlaceholderDone: {
+    backgroundColor: "#C5C5C5",
+  },
+
+  title: {
+    color: COLORS.text,
+    fontFamily: "Kantumruy",
+    fontSize: 13,
+  },
+  titleDone: {
+    color: "#A9A9A9",
+  },
+
+  points: {
+    color: COLORS.text,
+    opacity: 0.7,
+    fontSize: 11,
+    fontFamily: "Kantumruy",
+  },
+  pointsDone: {
+    color: "#A9A9A9",
+  },
 });
