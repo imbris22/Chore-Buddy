@@ -68,9 +68,17 @@ export default function WelcomeSetupScreen({ navigation, route }) {
 
   return (
     <View style={s.wrap}>
+      {/* Bottom Background Characters - Static */}
+      <Image
+        source={BottomArt}
+        style={s.bgArt}
+        resizeMode="contain"
+        pointerEvents="none"
+      />
+
       <KeyboardAvoidingView
         style={s.keyboardAvoid}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
           style={s.container}
@@ -153,21 +161,13 @@ export default function WelcomeSetupScreen({ navigation, route }) {
           <View style={{ height: BG_ART_HEIGHT + 20 }} />
         </ScrollView>
       </KeyboardAvoidingView>
-
-      {/* Bottom Background Characters - Static */}
-      <Image
-        source={BottomArt}
-        style={s.bgArt}
-        resizeMode="contain"
-        pointerEvents="none"
-      />
     </View>
   );
 }
 
 const s = StyleSheet.create({
   wrap: { flex: 1, backgroundColor: COLORS.bg },
-  keyboardAvoid: { flex: 1 },
+  keyboardAvoid: { flex: 1, zIndex: 1 },
   container: { flex: 1 },
   content: { padding: 16, paddingBottom: 140 },
 
@@ -324,5 +324,6 @@ const s = StyleSheet.create({
     height: BG_ART_HEIGHT,
     width: "100%",
     opacity: 0.5,
+    zIndex: 0,
   },
 });

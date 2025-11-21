@@ -110,6 +110,19 @@ export default function ChoreBoardScreen({ navigation }) {
     setModalOpen(false);
   };
 
+  // Set up Firestore listeners
+  React.useEffect(() => {
+    const unsubscribeCircle = useCircleStore
+      .getState()
+      .listenToFirestore("circle_demo_1");
+    const unsubscribeTasks = useTasksStore.getState().listenToFirestore();
+
+    return () => {
+      if (unsubscribeCircle) unsubscribeCircle();
+      if (unsubscribeTasks) unsubscribeTasks();
+    };
+  }, []);
+
   React.useEffect(() => {
     if (!hasAssignments) {
       const { assignments: map, state } = assignTasks(members, taskList, {

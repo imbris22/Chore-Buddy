@@ -20,6 +20,14 @@ export default function GroceryListScreen({ navigation }) {
   const { items, addItem, toggleItem } = useGroceryStore();
   const [text, setText] = React.useState("");
 
+  // Set up Firestore listener
+  React.useEffect(() => {
+    const unsubscribe = useGroceryStore.getState().listenToFirestore();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
   const handleAdd = () => {
     if (!text.trim()) return;
     addItem(text);
@@ -60,7 +68,7 @@ export default function GroceryListScreen({ navigation }) {
                 onPress={() => toggleItem(item.id)}
               >
                 <View style={[s.checkbox, item.done && s.checkboxOn]}>
-                {item.done && <Text style={s.checkMark}>✓</Text>}
+                  {item.done && <Text style={s.checkMark}>✓</Text>}
                 </View>
                 <Text
                   style={[s.itemText, item.done && s.itemTextDone]}
@@ -94,12 +102,11 @@ export default function GroceryListScreen({ navigation }) {
 
       <View style={s.navWrap}>
         <BottomNav
-            active={null}
-            onTabPress={(key) => {
+          active={null}
+          onTabPress={(key) => {
             if (key === "Home") navigation.navigate("ChoreBoard");
-        }}
-/>
-
+          }}
+        />
       </View>
     </View>
   );
@@ -123,21 +130,25 @@ const s = StyleSheet.create({
   },
   logoRow: { flexDirection: "row", alignItems: "center" },
   logoImg: { width: 120, height: 120, marginLeft: -16 },
-  logoText: { color: COLORS.text, fontSize: 28, fontFamily: "Jersey", marginLeft: -14 },
+  logoText: {
+    color: COLORS.text,
+    fontSize: 28,
+    fontFamily: "Jersey",
+    marginLeft: -14,
+  },
 
-card: {
-  backgroundColor: COLORS.bg,   
-  borderRadius: 0,             
-  paddingHorizontal: 16,
-  paddingTop: 18,
-  paddingBottom: 16,
-  shadowColor: "#000",
-  shadowOpacity: 0,             
-  shadowRadius: 0,
-  shadowOffset: { width: 0, height: 0 },
-  elevation: 0,                 
-},
-
+  card: {
+    backgroundColor: COLORS.bg,
+    borderRadius: 0,
+    paddingHorizontal: 16,
+    paddingTop: 18,
+    paddingBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+  },
 
   headerRow: {
     flexDirection: "row",
@@ -179,9 +190,19 @@ card: {
     backgroundColor: "#FFF",
   },
   checkboxOn: { backgroundColor: "#FFC7D3", borderColor: "#FFC7D3" },
-  checkboxInner: { width: 10, height: 10, borderRadius: 2, backgroundColor: "#F9F3ED" },
+  checkboxInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 2,
+    backgroundColor: "#F9F3ED",
+  },
 
-  itemText: { flex: 1, fontSize: 15, color: COLORS.text, fontFamily: "Kantumruy" },
+  itemText: {
+    flex: 1,
+    fontSize: 15,
+    color: COLORS.text,
+    fontFamily: "Kantumruy",
+  },
   itemTextDone: { textDecorationLine: "line-through", opacity: 0.6 },
 
   inputRow: {
@@ -193,7 +214,12 @@ card: {
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  input: { fontSize: 15, color: COLORS.text, fontFamily: "Kantumruy", paddingVertical: 2 },
+  input: {
+    fontSize: 15,
+    color: COLORS.text,
+    fontFamily: "Kantumruy",
+    paddingVertical: 2,
+  },
 
   addBtn: {
     marginTop: 10,
