@@ -172,17 +172,37 @@ export const useCircleStore = create(
           console.error("Error setting current user:", error);
         }
       },
-      leaveCircle: () => {
+      leaveCircle: async () => {
+        const state = get();
+
         // Remove current user from members
-        set((state) => {
-          const updatedMembers = state.members.filter(
-            (m) => m.id !== state.currentUserId
-          );
-          return {
-            members: updatedMembers,
-            currentUserId: null,
-          };
+        const updatedMembers = state.members.filter(
+          (m) => m.id !== state.currentUserId
+        );
+
+        // Update local state first
+        set({
+          members: updatedMembers,
+          currentUserId: null,
         });
+
+        // Sync the removal to Firestore
+        try {
+          const circleRef = doc(db, "circles", state.circleId);
+          await setDoc(
+            circleRef,
+            {
+              members: updatedMembers,
+              updatedAt: Date.now(),
+            },
+            { merge: true }
+          );
+
+          // Clear persisted data
+          await AsyncStorage.removeItem("cb_circle");
+        } catch (error) {
+          console.error("Error leaving circle:", error);
+        }
       },
     }),
     {
