@@ -104,8 +104,18 @@ export const useCircleStore = create(
       },
 
       setCurrentUser: async (name, avatar) => {
-        const newMemberId = `m_${Date.now()}`;
         const state = get();
+        const demoIds = ["m_bear", "m_alex", "m_sam", "m_jordan"];
+
+        // If user already has a valid currentUserId (not demo), prevent rejoining
+        if (state.currentUserId && !demoIds.includes(state.currentUserId)) {
+          console.log(
+            "User already logged in, cannot rejoin as different person"
+          );
+          return;
+        }
+
+        const newMemberId = `m_${Date.now()}`;
         const circleRef = doc(db, "circles", state.circleId);
 
         try {
@@ -118,7 +128,6 @@ export const useCircleStore = create(
           }
 
           // Filter out demo members (those with hardcoded IDs)
-          const demoIds = ["m_bear", "m_alex", "m_sam", "m_jordan"];
           const realMembers = existingMembers.filter(
             (m) => !demoIds.includes(m.id)
           );

@@ -13,11 +13,39 @@ import ChoreCreation from "../screens/ChoreCreationScreen";
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
+  const [initialRoute, setInitialRoute] = React.useState("JoinCircle");
+  const [isReady, setIsReady] = React.useState(false);
+
+  React.useEffect(() => {
+    // Check if user is already logged in
+    const checkUser = async () => {
+      try {
+        const { useCircleStore } = await import("../state/circleStore");
+        const currentUserId = useCircleStore.getState().currentUserId;
+
+        // If user has a currentUserId, skip to ChoreBoard
+        if (currentUserId && currentUserId !== "m_alex") {
+          setInitialRoute("ChoreBoard");
+        }
+      } catch (error) {
+        console.error("Error checking user:", error);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  if (!isReady) {
+    return null; // or a loading screen
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="JoinCircle"
+        initialRouteName={initialRoute}
       >
         <Stack.Screen name="JoinCircle" component={JoinCircleScreen} />
         <Stack.Screen name="WelcomeSetup" component={WelcomeSetupScreen} />
