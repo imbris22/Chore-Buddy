@@ -92,10 +92,11 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
 
-          <View style={s.headerRow}>
-            <Text style={s.headerTitle}>Profile</Text>
-            <Pressable onPress={() => navigation.goBack()} style={s.closeBtn}>
-              <Text style={s.closeText}>×</Text>
+          {/* Title row with X */}
+          <View style={s.titleRow}>
+            <Text style={s.title}>Profile</Text>
+            <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
+              <Text style={s.closeText}>✕</Text>
             </Pressable>
           </View>
 
@@ -217,6 +218,7 @@ const s = StyleSheet.create({
     width: "100%",
     height: 88,
     marginBottom: 16,
+    marginTop: 8,
   },
   logoRow: { flexDirection: "row", alignItems: "center" },
   logoImg: { width: 120, height: 120, marginLeft: -16 },
@@ -232,17 +234,16 @@ const s = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: "Jersey",
-    color: COLORS.text,
-  },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    justifyContent: "center",
+
+  titleRow: {
+    paddingTop: 18,
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 12,
+    marginLeft: 4,
   },
+  title: { fontSize: 22, color: COLORS.text, fontFamily: "Jersey" },
   closeText: { fontSize: 20, color: "#7B7B7B" },
 
   profileCard: {

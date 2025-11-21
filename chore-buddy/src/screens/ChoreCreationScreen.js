@@ -41,7 +41,7 @@ export default function AddChoreScreen({ navigation }) {
   const assignments = useTasksStore((s) => s.assignments);
   const upsertAssignments = useTasksStore((s) => s.upsertAssignments);
 
-  const { currentUserId } = useCircleStore();
+  const { currentUserId, circleId } = useCircleStore();
 
   const iconSourceByKey = {
     trash: TrashIcon,
@@ -94,17 +94,21 @@ export default function AddChoreScreen({ navigation }) {
     };
 
     // 1) add the chore itself
-    addChore(newChore);
+    addChore(newChore, circleId);
 
     // 2) optionally assign it to the current user for this week
     if (assignToMe && currentUserId) {
       const cycleKey = new Date().toISOString().split("T")[0]; // Match format used in ChoreBoardScreen
       const existingMap = assignments[cycleKey] || {};
 
-      upsertAssignments(cycleKey, {
-        ...existingMap,
-        [id]: currentUserId,
-      });
+      upsertAssignments(
+        cycleKey,
+        {
+          ...existingMap,
+          [id]: currentUserId,
+        },
+        circleId
+      );
     }
 
     navigation.goBack();
@@ -145,7 +149,7 @@ export default function AddChoreScreen({ navigation }) {
         <View style={s.titleRow}>
           <Text style={s.headerTitle}>Add New Chore</Text>
           <Pressable onPress={() => navigation.goBack()} style={s.closeBtn}>
-            <Text style={s.closeText}>×</Text>
+            <Text style={s.closeText}>✕</Text>
           </Pressable>
         </View>
         <Text style={s.subtitle}>Create a new chore for your circle</Text>

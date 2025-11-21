@@ -7,72 +7,7 @@ import { doc, setDoc, onSnapshot } from "firebase/firestore";
 export const useTasksStore = create(
   persist(
     (set, get) => ({
-      chores: {
-        ch_trash: {
-          id: "ch_trash",
-          title: "Trash",
-          points: 2,
-          recurring: true,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/trash-2.png"),
-        },
-        ch_dishes: {
-          id: "ch_dishes",
-          title: "Dishes",
-          points: 3,
-          recurring: false,
-          frequency: "daily",
-          icon: require("../../assets/chore-icons/utensils.png"),
-        },
-        ch_replace: {
-          id: "ch_replace",
-          title: "Replace light",
-          points: 2,
-          recurring: false,
-          frequency: "monthly",
-          icon: require("../../assets/chore-icons/brush-cleaning.png"),
-        },
-        ch_buy_eggs: {
-          id: "ch_buy_eggs",
-          title: "Buy eggs",
-          points: 3,
-          recurring: true,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/shopping-basket.png"),
-        },
-        ch_vacuum: {
-          id: "ch_vacuum",
-          title: "Vacuum",
-          points: 2,
-          recurring: false,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/brush-cleaning.png"),
-        },
-        ch_laundry: {
-          id: "ch_laundry",
-          title: "Laundry",
-          points: 3,
-          recurring: false,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/brush-cleaning.png"),
-        },
-        ch_sweep: {
-          id: "ch_sweep",
-          title: "Sweep",
-          points: 2,
-          recurring: false,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/brush-cleaning.png"),
-        },
-        ch_fold_clothes: {
-          id: "ch_fold_clothes",
-          title: "Fold clothes",
-          points: 3,
-          recurring: false,
-          frequency: "weekly",
-          icon: require("../../assets/chore-icons/brush-cleaning.png"),
-        },
-      },
+      chores: {},
       // assignments[cycleStartISO] = { taskId: memberId }
       assignments: {},
       // status[pairKey] = "pending"|"done"  (pairKey = `${cycleStartISO}:${taskId}`)
@@ -80,45 +15,56 @@ export const useTasksStore = create(
       // history[memberId] = [{ ts, cycleKey, taskId, title, points }]
       history: {},
 
-      setChores: (chores) => {
-        set({ chores });
-        setTimeout(() => get().syncToFirestore(), 0);
+      // Clear all data when switching circles
+      clearCircleData: () => {
+        set({
+          chores: {},
+          assignments: {},
+          status: {},
+          history: {},
+        });
       },
 
-      addChore: (chore) => {
+      setChores: (chores, circleId) => {
+        set({ chores });
+        setTimeout(() => get().syncToFirestore(circleId), 0);
+      },
+
+      addChore: (chore, circleId) => {
         set((s) => ({
           chores: {
             ...s.chores,
             [chore.id]: chore,
           },
         }));
-        setTimeout(() => get().syncToFirestore(), 0);
+        setTimeout(() => get().syncToFirestore(circleId), 0);
       },
 
-      upsertAssignments: (cycleStartISO, map) => {
+      upsertAssignments: (cycleStartISO, map, circleId) => {
         set((s) => ({
           assignments: { ...s.assignments, [cycleStartISO]: map },
         }));
-        setTimeout(() => get().syncToFirestore(), 0);
+        setTimeout(() => get().syncToFirestore(circleId), 0);
       },
 
-      setStatus: (pairKey, val) => {
+      setStatus: (pairKey, val, circleId) => {
         set((s) => ({ status: { ...s.status, [pairKey]: val } }));
-        setTimeout(() => get().syncToFirestore(), 0);
+        setTimeout(() => get().syncToFirestore(circleId), 0);
       },
 
-      addHistory: (memberId, entry) => {
+      addHistory: (memberId, entry, circleId) => {
         set((s) => {
           const list = s.history[memberId] || [];
           return { history: { ...s.history, [memberId]: [entry, ...list] } };
         });
-        setTimeout(() => get().syncToFirestore(), 0);
+        setTimeout(() => get().syncToFirestore(circleId), 0);
       },
 
       // Sync to Firestore
-      syncToFirestore: async () => {
+      syncToFirestore: async (circleId) => {
+        if (!circleId) return;
         const state = get();
-        const tasksRef = doc(db, "tasks", "default");
+        const tasksRef = doc(db, "tasks", circleId);
         try {
           // Convert chores with icon requires to strings for Firestore
           const serializedChores = {};
@@ -147,8 +93,9 @@ export const useTasksStore = create(
       },
 
       // Listen to Firestore changes
-      listenToFirestore: () => {
-        const tasksRef = doc(db, "tasks", "default");
+      listenToFirestore: (circleId) => {
+        if (!circleId) return null;
+        const tasksRef = doc(db, "tasks", circleId);
         return onSnapshot(
           tasksRef,
           (snapshot) => {

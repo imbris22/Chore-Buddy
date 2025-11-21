@@ -40,17 +40,19 @@ export default function RankingsScreen({ navigation }) {
   const ranked = React.useMemo(() => {
     const now = Date.now();
     const monthCutoff = now - 30 * 24 * 60 * 60 * 1000;
+    const weekStart = week.start.getTime();
+    const weekEnd = week.end.getTime();
 
     const withPoints = members.map((m) => {
       let points = 0;
 
       if (scope === "weekly") {
-        // completed points this week from current status
-        points = taskList.reduce((sum, t) => {
-          if (assignMap[t.id] !== m.id) return sum;
-          const key = `${cycleKey}:${t.id}`;
-          const done = status[key] === "done";
-          return sum + (done ? t.points || 1 : 0);
+        // completed points this week from history
+        const entries = history[m.id] || [];
+        points = entries.reduce((sum, h) => {
+          if (!h || typeof h.ts !== "number") return sum;
+          if (h.ts < weekStart || h.ts > weekEnd) return sum;
+          return sum + (h.points || 1);
         }, 0);
       } else {
         const entries = history[m.id] || [];
@@ -70,7 +72,7 @@ export default function RankingsScreen({ navigation }) {
       .slice()
       .sort((a, b) => b.points - a.points)
       .slice(0, 3);
-  }, [members, taskList, assignMap, status, cycleKey, scope, history]);
+  }, [members, week, scope, history]);
 
   // arrange podium as: 2nd – 1st – 3rd
   const podium = [ranked[1] || null, ranked[0] || null, ranked[2] || null];
@@ -96,7 +98,7 @@ export default function RankingsScreen({ navigation }) {
           <View style={s.titleRow}>
             <Text style={s.title}>Rankings</Text>
             <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
-              <Text style={s.closeText}>×</Text>
+              <Text style={s.closeText}>✕</Text>
             </Pressable>
           </View>
 
@@ -294,7 +296,7 @@ const s = StyleSheet.create({
   },
   barLeft: { height: 90, backgroundColor: "#B7E2E6" },
   barCenter: { height: 120, backgroundColor: "#FFC7D3" },
-  barRight: { height: 80, backgroundColor: "#F6C48A" },
+  barRight: { height: 60, backgroundColor: "#F6C48A" },
 
   barScore: { fontSize: 18, fontFamily: "Jersey", color: COLORS.text },
   barName: {
@@ -305,10 +307,10 @@ const s = StyleSheet.create({
   },
 
   avatar: {
-    width: 54,
-    height: 54,
+    width: 74,
+    height: 74,
     position: "absolute",
-    top: -26,
+    top: -40,
   },
   avatarLeft: {},
   avatarCenter: {},

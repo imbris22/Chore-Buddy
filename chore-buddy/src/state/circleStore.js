@@ -44,6 +44,9 @@ export const useCircleStore = create(
           .toLowerCase()
           .replace(/\s+/g, "_")}`;
 
+        // Clear tasks data when switching circles
+        useTasksStore.getState().clearCircleData();
+
         set({
           circleId,
           circleName,
@@ -193,7 +196,7 @@ export const useCircleStore = create(
           );
 
           const cycleKey = new Date().toISOString().split("T")[0];
-          upsertAssignments(cycleKey, assignments);
+          upsertAssignments(cycleKey, assignments, state.circleId);
 
           // Update local state
           set({

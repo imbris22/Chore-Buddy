@@ -106,17 +106,21 @@ export default function ChoreBoardScreen({ navigation }) {
     if (!selectedTask) return;
     const pairKey = `${cycleKey}:${selectedTask.id}`;
 
-    setStatus(pairKey, "done"); // triggers progress recompute
+    setStatus(pairKey, "done", circleId); // triggers progress recompute
 
     const assigneeId = assignMap[selectedTask.id];
     if (assigneeId) {
-      addHistory(assigneeId, {
-        ts: Date.now(),
-        cycleKey,
-        taskId: selectedTask.id,
-        title: selectedTask.title,
-        points: selectedTask.points || 1,
-      });
+      addHistory(
+        assigneeId,
+        {
+          ts: Date.now(),
+          cycleKey,
+          taskId: selectedTask.id,
+          title: selectedTask.title,
+          points: selectedTask.points || 1,
+        },
+        circleId
+      );
     }
 
     setModalOpen(false);
@@ -129,7 +133,9 @@ export default function ChoreBoardScreen({ navigation }) {
     const unsubscribeCircle = useCircleStore
       .getState()
       .listenToFirestore(circleId);
-    const unsubscribeTasks = useTasksStore.getState().listenToFirestore();
+    const unsubscribeTasks = useTasksStore
+      .getState()
+      .listenToFirestore(circleId);
 
     return () => {
       if (unsubscribeCircle) unsubscribeCircle();
@@ -183,7 +189,7 @@ export default function ChoreBoardScreen({ navigation }) {
         });
 
         // Save the new assignments without touching existing ones
-        upsertAssignments(cycleKey, newAssignments);
+        upsertAssignments(cycleKey, newAssignments, circleId);
       }
     }
   }, [
@@ -353,7 +359,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     height: 88,
-    marginTop: 16,
+    marginTop: 8,
     marginBottom: 16,
   },
   logoRow: { flexDirection: "row", alignItems: "center" },

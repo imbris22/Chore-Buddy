@@ -53,10 +53,8 @@ export default function HistoryScreen({ navigation }) {
     if (!rawHistory) return [];
     // preferred shape: history is an object keyed by memberId -> [entries]
     if (rawHistory[currentUserId]) return rawHistory[currentUserId];
-    // if history is already an array (legacy), use it
-    if (Array.isArray(rawHistory)) return rawHistory;
-    // fallback: flatten all member lists
-    return Object.values(rawHistory).flat();
+    // if the user has no history yet, return empty array (don't show other people's history)
+    return [];
   }, [rawHistory, currentUserId]);
 
   // group completions by week start (unchanged grouping logic)
@@ -64,7 +62,8 @@ export default function HistoryScreen({ navigation }) {
     const map = new Map();
     completions.forEach((c) => {
       // support several possible date keys (ts is what addHistory sets)
-      const dateVal = c.ts || c.time || c.date || c.completedAt || c.completed_at;
+      const dateVal =
+        c.ts || c.time || c.date || c.completedAt || c.completed_at;
       const date = dateVal ? new Date(dateVal) : new Date(); // fallback to now
       const ws = weekStartDate(date).getTime();
       if (!map.has(ws)) map.set(ws, []);
@@ -159,7 +158,10 @@ export default function HistoryScreen({ navigation }) {
                 {formatWeekLabel(week.weekStart)}
               </Text>
               {week.items.map((it) => (
-                <View key={`${it.taskId ?? it.id}-${it.ts ?? it._date.getTime()}`} style={styles.historyItem}>
+                <View
+                  key={`${it.taskId ?? it.id}-${it.ts ?? it._date.getTime()}`}
+                  style={styles.historyItem}
+                >
                   <Text style={styles.itemTitle}>
                     {it.title ?? it.name ?? it.choreTitle ?? "Untitled"}
                   </Text>
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
   headerIcon: { width: 20, height: 20, marginRight: 8 },
   headerTitle: { fontSize: 22, color: COLORS.text, fontFamily: "Jersey" },
   closeBtn: { padding: 8 },
-  closeX: { fontSize: 20, color: COLORS.text },
+  closeX: { fontSize: 20, color: "#7B7B7B"},
 
   metricsRow: { marginTop: 12, gap: 12 },
   metricCard: {
@@ -255,7 +257,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemTitle: { color: COLORS.text, fontFamily: "Kantumruy" },
-  itemPoints: { color: COLORS.text, fontFamily: "Jersey", fontWeight: "700", fontSize: 20 },
+  itemPoints: {
+    color: COLORS.text,
+    fontFamily: "Jersey",
+    fontWeight: "700",
+    fontSize: 20,
+  },
 
   empty: { color: COLORS.text, fontFamily: "Kantumruy", marginTop: 20 },
 });
