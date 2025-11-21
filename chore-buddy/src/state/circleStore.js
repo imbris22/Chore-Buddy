@@ -16,15 +16,11 @@ import { useTasksStore } from "./tasksStore";
 export const useCircleStore = create(
   persist(
     (set, get) => ({
-      // Demo circle & members, first member is the logged-in user for now
-      circleId: "circle_demo_1",
-      members: [
-        { id: "m_bear", name: "Bear", avatar: bearAvatar },
-        { id: "m_alex", name: "Alex", avatar: alexAvatar },
-        { id: "m_sam", name: "Sam", avatar: samAvatar },
-        { id: "m_jordan", name: "Jordan", avatar: jordanAvatar },
-      ],
-      currentUserId: "m_alex",
+      // Circle data
+      circleId: null,
+      circleName: null,
+      members: [],
+      currentUserId: null,
       // running totals
       memberPoints: {}, // { memberId: number }
       tieCursor: 0,
@@ -40,6 +36,42 @@ export const useCircleStore = create(
       setRecurringNextIdx: (recurringNextIdx) => {
         set({ recurringNextIdx });
         setTimeout(() => get().syncToFirestore(), 0);
+      },
+
+      // Join or create circle
+      setCircle: async (circleName, isNewCircle = false) => {
+        const circleId = `circle_${circleName
+          .toLowerCase()
+          .replace(/\s+/g, "_")}`;
+
+        set({
+          circleId,
+          circleName,
+          members: [],
+          memberPoints: {},
+          tieCursor: 0,
+          recurringNextIdx: {},
+        });
+
+        if (isNewCircle) {
+          // Create new circle in Firestore
+          const circleRef = doc(db, "circles", circleId);
+          try {
+            await setDoc(circleRef, {
+              name: circleName.toLowerCase(),
+              displayName: circleName,
+              members: [],
+              memberPoints: {},
+              tieCursor: 0,
+              recurringNextIdx: {},
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            });
+          } catch (error) {
+            console.error("Error creating circle:", error);
+            throw error;
+          }
+        }
       },
 
       // Sync to Firestore
@@ -73,11 +105,7 @@ export const useCircleStore = create(
               const data = snapshot.data();
               const state = get();
 
-              // Filter out demo members
-              const demoIds = ["m_bear", "m_alex", "m_sam", "m_jordan"];
-              const remoteMembers = (data.members || []).filter(
-                (m) => !demoIds.includes(m.id)
-              );
+              const remoteMembers = data.members || [];
               const remoteMemberIds = remoteMembers.map((m) => m.id);
 
               // Find current user in local state
@@ -105,10 +133,14 @@ export const useCircleStore = create(
 
       setCurrentUser: async (name, avatar) => {
         const state = get();
-        const demoIds = ["m_bear", "m_alex", "m_sam", "m_jordan"];
 
-        // If user already has a valid currentUserId (not demo), prevent rejoining
-        if (state.currentUserId && !demoIds.includes(state.currentUserId)) {
+        if (!state.circleId) {
+          console.error("No circle selected");
+          return;
+        }
+
+        // If user already has a valid currentUserId, prevent rejoining
+        if (state.currentUserId) {
           console.log(
             "User already logged in, cannot rejoin as different person"
           );
@@ -127,10 +159,7 @@ export const useCircleStore = create(
             existingMembers = snapshot.data().members || [];
           }
 
-          // Filter out demo members (those with hardcoded IDs)
-          const realMembers = existingMembers.filter(
-            (m) => !demoIds.includes(m.id)
-          );
+          const realMembers = existingMembers;
 
           // Check if user already exists (by name to prevent duplicates)
           const userExists = realMembers.some(
@@ -217,10 +246,11 @@ export const useCircleStore = create(
     {
       name: "cb_circle",
       storage: createJSONStorage(() => AsyncStorage),
-      // Persist currentUserId so users maintain their identity across sessions
+      // Persist currentUserId and circle info so users maintain their identity across sessions
       partialize: (state) => ({
         currentUserId: state.currentUserId,
         circleId: state.circleId,
+        circleName: state.circleName,
       }),
     }
   )

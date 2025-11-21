@@ -19,53 +19,54 @@ import BottomArt from "../../assets/background image.png";
 
 const BG_ART_HEIGHT = 500;
 
-export default function JoinCircleScreen({ navigation }) {
-  const [circleCode, setCircleCode] = React.useState("");
+export default function CreateCircleScreen({ navigation }) {
+  const [circleName, setCircleName] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleJoin = async () => {
-    const trimmedCode = circleCode.trim();
+  const handleCreate = async () => {
+    const trimmedName = circleName.trim();
 
-    if (trimmedCode === "") {
-      Alert.alert("Error", "Please enter a circle code");
+    if (trimmedName === "") {
+      Alert.alert("Error", "Please enter a circle name");
+      return;
+    }
+
+    if (trimmedName.length < 3) {
+      Alert.alert("Error", "Circle name must be at least 3 characters");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Check if circle exists
+      // Check if circle name already exists
       const circlesRef = collection(db, "circles");
       const q = query(
         circlesRef,
-        where("name", "==", trimmedCode.toLowerCase())
+        where("name", "==", trimmedName.toLowerCase())
       );
       const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) {
+      if (!querySnapshot.empty) {
         Alert.alert(
           "Error",
-          "Circle not found. Please check the name or create a new circle."
+          "A circle with this name already exists. Please choose a different name."
         );
         setIsLoading(false);
         return;
       }
 
-      // Circle exists, proceed to welcome setup
+      // Circle name is unique, proceed to WelcomeSetup
       navigation.navigate("WelcomeSetup", {
-        circleCode: trimmedCode,
-        isNewCircle: false,
+        circleCode: trimmedName,
+        isNewCircle: true,
       });
     } catch (error) {
-      console.error("Error checking circle:", error);
-      Alert.alert("Error", "Failed to join circle. Please try again.");
+      console.error("Error checking circle name:", error);
+      Alert.alert("Error", "Failed to create circle. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleCreateCircle = () => {
-    navigation.navigate("CreateCircle");
   };
 
   return (
@@ -97,42 +98,42 @@ export default function JoinCircleScreen({ navigation }) {
 
           {/* Main Content */}
           <View style={s.mainContent}>
-            <Text style={s.title}>Join a Circle!</Text>
-            <Text style={s.subtitle}>
-              Enter your circle code to get started
-            </Text>
+            <Text style={s.title}>Create a Circle!</Text>
+            <Text style={s.subtitle}>Choose a unique name for your circle</Text>
 
-            {/* Join Circle Card */}
+            {/* Create Circle Card */}
             <View style={s.card}>
-              <Text style={s.cardTitle}>Enter Code</Text>
+              <Text style={s.cardTitle}>Circle Name</Text>
 
               <TextInput
                 style={s.input}
-                placeholder="Circle Code"
-                placeholderTextColor={COLORS.text}
-                value={circleCode}
-                onChangeText={setCircleCode}
-                maxLength={20}
+                placeholder="e.g., Smith Family, Roommates"
+                placeholderTextColor="#C1B6A9"
+                value={circleName}
+                onChangeText={setCircleName}
+                maxLength={30}
+                autoCapitalize="words"
+                editable={!isLoading}
               />
 
               <Pressable
                 style={({ pressed }) => [
-                  s.joinBtn,
-                  pressed && s.joinBtnPressed,
-                  isLoading && s.joinBtnDisabled,
+                  s.createBtn,
+                  pressed && s.createBtnPressed,
+                  isLoading && s.createBtnDisabled,
                 ]}
-                onPress={handleJoin}
+                onPress={handleCreate}
                 disabled={isLoading}
               >
-                <Text style={s.joinBtnText}>
-                  {isLoading ? "Joining..." : "Join"}
+                <Text style={s.createBtnText}>
+                  {isLoading ? "Creating..." : "Create Circle"}
                 </Text>
               </Pressable>
             </View>
 
-            {/* Create Circle Link */}
-            <Pressable onPress={handleCreateCircle}>
-              <Text style={s.createLink}>Create a New Circle</Text>
+            {/* Back to Join Link */}
+            <Pressable onPress={() => navigation.goBack()} disabled={isLoading}>
+              <Text style={s.backLink}>Back to Join Circle</Text>
             </Pressable>
           </View>
 
@@ -223,28 +224,28 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
 
-  joinBtn: {
+  createBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
 
-  joinBtnPressed: {
+  createBtnPressed: {
     opacity: 0.8,
   },
 
-  joinBtnDisabled: {
+  createBtnDisabled: {
     opacity: 0.5,
   },
 
-  joinBtnText: {
+  createBtnText: {
     color: COLORS.text,
     fontSize: 18,
     fontFamily: "Jersey",
   },
 
-  createLink: {
+  backLink: {
     color: COLORS.text,
     fontSize: 16,
     fontFamily: "Kantumruy",

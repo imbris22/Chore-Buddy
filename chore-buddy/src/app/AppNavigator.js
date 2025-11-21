@@ -5,6 +5,7 @@ import ChoreBoardScreen from "../screens/ChoreBoardScreen";
 import GroceryListScreen from "../screens/GroceryListScreen";
 import HistoryScreen from "../screens/HistoryScreen";
 import JoinCircleScreen from "../screens/JoinCircleScreen";
+import CreateCircleScreen from "../screens/CreateCircleScreen";
 import WelcomeSetupScreen from "../screens/WelcomeSetupScreen";
 import RankingsScreen from "../screens/RankingsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -21,10 +22,10 @@ export default function AppNavigator() {
     const checkUser = async () => {
       try {
         const { useCircleStore } = await import("../state/circleStore");
-        const currentUserId = useCircleStore.getState().currentUserId;
+        const { currentUserId, circleId } = useCircleStore.getState();
 
-        // If user has a currentUserId, skip to ChoreBoard
-        if (currentUserId && currentUserId !== "m_alex") {
+        // If user has a currentUserId and circleId, skip to ChoreBoard
+        if (currentUserId && circleId) {
           setInitialRoute("ChoreBoard");
         }
       } catch (error) {
@@ -48,6 +49,7 @@ export default function AppNavigator() {
         initialRouteName={initialRoute}
       >
         <Stack.Screen name="JoinCircle" component={JoinCircleScreen} />
+        <Stack.Screen name="CreateCircle" component={CreateCircleScreen} />
         <Stack.Screen name="WelcomeSetup" component={WelcomeSetupScreen} />
         <Stack.Screen name="ChoreBoard" component={ChoreBoardScreen} />
         <Stack.Screen name="ChoreCreation" component={ChoreCreation} />

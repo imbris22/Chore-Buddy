@@ -44,19 +44,26 @@ const AVATARS = [
 const BG_ART_HEIGHT = 500;
 
 export default function WelcomeSetupScreen({ navigation, route }) {
-  const { circleCode } = route.params || {};
-  const { setCurrentUser, members } = useCircleStore();
+  const { circleCode, isNewCircle = false } = route.params || {};
+  const { setCircle, setCurrentUser, members } = useCircleStore();
 
   const [name, setName] = React.useState("");
   const [selectedAvatar, setSelectedAvatar] = React.useState(AVATARS[0].id);
 
-  const handleContinue = () => {
+  // Set circle when screen loads
+  React.useEffect(() => {
+    if (circleCode) {
+      setCircle(circleCode, isNewCircle);
+    }
+  }, [circleCode, isNewCircle]);
+
+  const handleContinue = async () => {
     if (name.trim() !== "") {
       // Find the selected avatar image
       const avatarObj = AVATARS.find((a) => a.id === selectedAvatar);
 
       // Set current user in the store
-      setCurrentUser(name.trim(), avatarObj.image);
+      await setCurrentUser(name.trim(), avatarObj.image);
 
       // Navigate to ChoreBoard
       navigation.reset({

@@ -34,6 +34,7 @@ export default function ChoreBoardScreen({ navigation }) {
   };
 
   const {
+    circleId,
     members,
     currentUserId,
     memberPoints,
@@ -43,6 +44,16 @@ export default function ChoreBoardScreen({ navigation }) {
     setTieCursor,
     setRecurringNextIdx,
   } = useCircleStore();
+
+  // Redirect to JoinCircle if user hasn't joined a circle
+  React.useEffect(() => {
+    if (!currentUserId || !circleId) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "JoinCircle" }],
+      });
+    }
+  }, [currentUserId, circleId, navigation]);
 
   const {
     chores,
@@ -55,7 +66,7 @@ export default function ChoreBoardScreen({ navigation }) {
 
   const week = currentWeek();
   const cycleKey = new Date().toISOString().split("T")[0]; // Match the format used in upsertAssignments
-  const myMember = members.find((m) => m.id === currentUserId) || members[0];
+  const myMember = members.find((m) => m.id === currentUserId);
 
   const assignMap = assignments[cycleKey] || {};
   const taskList = React.useMemo(() => Object.values(chores), [chores]);
@@ -65,10 +76,10 @@ export default function ChoreBoardScreen({ navigation }) {
     [assignMap]
   );
 
-  const myTasks = React.useMemo(
-    () => taskList.filter((t) => assignMap[t.id] === myMember.id),
-    [assignMap, taskList, myMember]
-  );
+  const myTasks = React.useMemo(() => {
+    if (!myMember) return [];
+    return taskList.filter((t) => assignMap[t.id] === myMember.id);
+  }, [assignMap, taskList, myMember]);
 
   const totals = React.useMemo(() => {
     const max = myTasks.reduce((s, t) => s + (t.points || 1), 0);
@@ -112,16 +123,18 @@ export default function ChoreBoardScreen({ navigation }) {
 
   // Set up Firestore listeners
   React.useEffect(() => {
+    if (!circleId) return;
+
     const unsubscribeCircle = useCircleStore
       .getState()
-      .listenToFirestore("circle_demo_1");
+      .listenToFirestore(circleId);
     const unsubscribeTasks = useTasksStore.getState().listenToFirestore();
 
     return () => {
       if (unsubscribeCircle) unsubscribeCircle();
       if (unsubscribeTasks) unsubscribeTasks();
     };
-  }, []);
+  }, [circleId]);
 
   React.useEffect(() => {
     if (!hasAssignments) {
@@ -168,7 +181,7 @@ export default function ChoreBoardScreen({ navigation }) {
         </View>
 
         {/* Greeting */}
-        <Text style={s.hi}>Hi {myMember.name}!</Text>
+        <Text style={s.hi}>Hi {myMember?.name || "there"}!</Text>
         <Text style={s.week}>
           Your chores for week of {new Date(week.start).toLocaleDateString()}
         </Text>
