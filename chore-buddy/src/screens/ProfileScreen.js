@@ -40,7 +40,7 @@ export default function ProfileScreen({ navigation }) {
     if (key === "Profile") navigation.navigate("Profile");
   };
 
-  const { members, currentUserId } = useCircleStore();
+  const { members, currentUserId, circleName } = useCircleStore();
   const { history = {}, memberPoints = {} } = useTasksStore();
 
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
@@ -109,7 +109,7 @@ export default function ProfileScreen({ navigation }) {
               />
             </View>
             <Text style={s.name}>{myMember.name}</Text>
-            <Text style={s.username}>Gutmann 205</Text>
+            <Text style={s.username}>{circleName || "No Circle"}</Text>
           </View>
 
           {/* Stats Grid */}
@@ -256,8 +256,8 @@ const s = StyleSheet.create({
     height: 250,
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     backgroundColor: "#F1C6D2",
     borderRadius: 16,
     justifyContent: "center",
