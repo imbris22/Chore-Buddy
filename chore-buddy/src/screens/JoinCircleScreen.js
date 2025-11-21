@@ -99,16 +99,16 @@ export default function JoinCircleScreen({ navigation }) {
           <View style={s.mainContent}>
             <Text style={s.title}>Join a Circle!</Text>
             <Text style={s.subtitle}>
-              Enter your circle code to get started
+              Enter your circle name to get started
             </Text>
 
             {/* Join Circle Card */}
             <View style={s.card}>
-              <Text style={s.cardTitle}>Enter Code</Text>
+              <Text style={s.cardTitle}>Enter Name</Text>
 
               <TextInput
                 style={s.input}
-                placeholder="Circle Code"
+                placeholder="Circle Name"
                 placeholderTextColor={COLORS.text}
                 value={circleCode}
                 onChangeText={setCircleCode}
