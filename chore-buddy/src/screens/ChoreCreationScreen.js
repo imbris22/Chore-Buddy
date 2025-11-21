@@ -98,8 +98,7 @@ export default function AddChoreScreen({ navigation }) {
 
     // 2) optionally assign it to the current user for this week
     if (assignToMe && currentUserId) {
-      const week = currentWeek();
-      const cycleKey = week.startISO;
+      const cycleKey = new Date().toISOString().split("T")[0]; // Match format used in ChoreBoardScreen
       const existingMap = assignments[cycleKey] || {};
 
       upsertAssignments(cycleKey, {

@@ -71,10 +71,11 @@ export default function ChoreBoardScreen({ navigation }) {
   const assignMap = assignments[cycleKey] || {};
   const taskList = React.useMemo(() => Object.values(chores), [chores]);
 
-  const hasAssignments = React.useMemo(
-    () => Object.keys(assignMap).length > 0,
-    [assignMap]
-  );
+  const hasAllAssignments = React.useMemo(() => {
+    if (taskList.length === 0) return true;
+    // Check if all tasks have assignments
+    return taskList.every((task) => assignMap[task.id] !== undefined);
+  }, [assignMap, taskList]);
 
   const myTasks = React.useMemo(() => {
     if (!myMember) return [];
@@ -137,19 +138,56 @@ export default function ChoreBoardScreen({ navigation }) {
   }, [circleId]);
 
   React.useEffect(() => {
-    if (!hasAssignments) {
-      const { assignments: map, state } = assignTasks(members, taskList, {
-        memberPoints,
-        tieCursor,
-        recurringNextIdx,
+    if (!hasAllAssignments && members.length > 0 && taskList.length > 0) {
+      // Filter out completed chores - we don't want to redistribute those
+      const incompleteTasks = taskList.filter((task) => {
+        const taskStatusKey = `${cycleKey}:${task.id}`;
+        return status[taskStatusKey] !== "done";
       });
-      upsertAssignments(cycleKey, map);
-      setTotals(state.memberPoints);
-      setTieCursor(state.tieCursor);
-      setRecurringNextIdx(state.recurringNextIdx);
+
+      // Find which specific tasks are unassigned
+      const unassignedTasks = incompleteTasks.filter(
+        (task) => !assignMap[task.id]
+      );
+
+      // If there are unassigned tasks, assign them greedily to member with lowest points
+      if (unassignedTasks.length > 0) {
+        const newAssignments = { ...assignMap };
+
+        unassignedTasks.forEach((task) => {
+          // Calculate current point totals for each member
+          const memberLoads = members.map((member) => {
+            // Sum up points from their current assignments
+            const currentPoints = Object.keys(newAssignments)
+              .filter((taskId) => newAssignments[taskId] === member.id)
+              .reduce((sum, taskId) => {
+                const t = taskList.find((task) => task.id === taskId);
+                return sum + (t?.points || 0);
+              }, 0);
+
+            return {
+              memberId: member.id,
+              load: (memberPoints[member.id] || 0) + currentPoints,
+            };
+          });
+
+          // Sort by load (ascending) and assign to the person with lowest load
+          memberLoads.sort((a, b) => a.load - b.load);
+          const assignedMemberId = memberLoads[0].memberId;
+
+          // Assign this task
+          newAssignments[task.id] = assignedMemberId;
+
+          // Update the load for next iteration
+          memberLoads[0].load += task.points;
+        });
+
+        // Save the new assignments without touching existing ones
+        upsertAssignments(cycleKey, newAssignments);
+      }
     }
   }, [
-    hasAssignments,
+    hasAllAssignments,
     members,
     taskList,
     cycleKey,
@@ -157,6 +195,8 @@ export default function ChoreBoardScreen({ navigation }) {
     tieCursor,
     recurringNextIdx,
     upsertAssignments,
+    assignMap,
+    status,
     setTotals,
     setTieCursor,
     setRecurringNextIdx,
@@ -188,31 +228,29 @@ export default function ChoreBoardScreen({ navigation }) {
 
         {/* Task cards (tap opens modal) */}
         <View style={s.row}>
-          {hasAssignments ? (
-            myTasks.length ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={s.rowContent}
-              >
-                {myTasks.map((t) => {
-                  const pairKey = `${cycleKey}:${t.id}`;
-                  const isDone = status[pairKey] === "done";
+          {myTasks.length ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.rowContent}
+            >
+              {myTasks.map((t) => {
+                const pairKey = `${cycleKey}:${t.id}`;
+                const isDone = status[pairKey] === "done";
 
-                  return (
-                    <ChoreCard
-                      key={t.id}
-                      chore={t}
-                      isDone={isDone}
-                      onPress={() => openComplete(t)}
-                    />
-                  );
-                })}
-              </ScrollView>
-            ) : (
-              <Text style={s.empty}>No chores assigned.</Text>
-            )
-          ) : null}
+                return (
+                  <ChoreCard
+                    key={t.id}
+                    chore={t}
+                    isDone={isDone}
+                    onPress={() => openComplete(t)}
+                  />
+                );
+              })}
+            </ScrollView>
+          ) : (
+            <Text style={s.empty}>No chores assigned.</Text>
+          )}
         </View>
 
         {/* Progress summary */}
