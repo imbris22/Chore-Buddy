@@ -38,8 +38,7 @@ export default function LeaveCircleModal({
           <View style={s.circleBox}>
             <Text style={s.circleName}>{circleName}</Text>
             <Text style={s.warningText}>
-              You will lose access to all chores, rankings, and history for this
-              circle. Also, your chores will be removed from the circle.
+              You will lose access to all circle data and your chores will be discarded.
             </Text>
           </View>
 
