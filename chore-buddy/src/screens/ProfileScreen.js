@@ -11,6 +11,7 @@ import {
 import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import BottomNav from "../components/BottomNav";
+import LeaveCircleModal from "../components/LeaveCircleModal";
 import { useCircleStore } from "../state/circleStore";
 import { useTasksStore } from "../state/tasksStore";
 
@@ -42,6 +43,8 @@ export default function ProfileScreen({ navigation }) {
 
   const { members, currentUserId, circleName } = useCircleStore();
   const { history = {} } = useTasksStore();
+
+  const [showLeaveModal, setShowLeaveModal] = React.useState(false);
 
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
   const myHistory = history[currentUserId] || [];
@@ -178,16 +181,7 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
 
-          <Pressable
-            style={s.menuItem}
-            onPress={() => {
-              useCircleStore.getState().leaveCircle();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "JoinCircle" }],
-              });
-            }}
-          >
+          <Pressable style={s.menuItem} onPress={() => setShowLeaveModal(true)}>
             <View style={s.leaveIcon}>
               <SvgUri
                 width={20}
@@ -206,6 +200,21 @@ export default function ProfileScreen({ navigation }) {
       <View style={s.navWrap}>
         <BottomNav active="Profile" onTabPress={handleTabPress} />
       </View>
+
+      {/* Leave Circle Modal */}
+      <LeaveCircleModal
+        visible={showLeaveModal}
+        circleName={circleName || "this circle"}
+        onConfirm={() => {
+          setShowLeaveModal(false);
+          useCircleStore.getState().leaveCircle();
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "JoinCircle" }],
+          });
+        }}
+        onCancel={() => setShowLeaveModal(false)}
+      />
     </View>
   );
 }

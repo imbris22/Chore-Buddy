@@ -148,7 +148,7 @@ export default function AddChoreScreen({ navigation }) {
         {/* Title */}
         <View style={s.titleRow}>
           <Text style={s.headerTitle}>Add New Chore</Text>
-          <Pressable onPress={() => navigation.goBack()} style={s.closeBtn}>
+          <Pressable onPress={handleClosePress} style={s.closeBtn}>
             <Text style={s.closeText}>✕</Text>
           </Pressable>
         </View>
