@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   headerIcon: { width: 20, height: 20, marginRight: 8 },
   headerTitle: { fontSize: 22, color: COLORS.text, fontFamily: "Jersey" },
   closeBtn: { padding: 8 },
-  closeX: { fontSize: 20, color: "#7B7B7B"},
+  closeX: { fontSize: 20, color: "#7B7B7B" },
 
   metricsRow: { marginTop: 12, gap: 12 },
   metricCard: {
@@ -260,7 +260,6 @@ const styles = StyleSheet.create({
   itemPoints: {
     color: COLORS.text,
     fontFamily: "Jersey",
-    fontWeight: "700",
     fontSize: 20,
   },
 

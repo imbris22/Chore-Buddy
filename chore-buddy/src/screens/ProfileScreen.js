@@ -41,13 +41,19 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const { members, currentUserId, circleName } = useCircleStore();
-  const { history = {}, memberPoints = {} } = useTasksStore();
+  const { history = {} } = useTasksStore();
 
   const myMember = members.find((m) => m.id === currentUserId) || members[0];
   const myHistory = history[currentUserId] || [];
 
-  // Calculate stats
-  const totalPoints = memberPoints[currentUserId] || 0;
+  // Calculate stats from history (all-time points)
+  const totalPoints = React.useMemo(() => {
+    return myHistory.reduce((sum, h) => {
+      if (!h || typeof h.points !== "number") return sum;
+      return sum + h.points;
+    }, 0);
+  }, [myHistory]);
+
   const choresDone = myHistory.length;
 
   // Calculate week streak (same logic as HistoryScreen)
@@ -72,8 +78,24 @@ export default function ProfileScreen({ navigation }) {
     return count;
   }, [myHistory]);
 
-  // Calculate rank (simplified - assume top based on points)
-  const rank = 1; // placeholder
+  // Calculate rank based on all-time points (same logic as RankingsScreen)
+  const rank = React.useMemo(() => {
+    const memberPoints = members.map((m) => {
+      const entries = history[m.id] || [];
+      const points = entries.reduce((sum, h) => {
+        if (!h || typeof h.points !== "number") return sum;
+        return sum + h.points;
+      }, 0);
+      return { id: m.id, points };
+    });
+
+    // Sort by points descending
+    const sorted = memberPoints.sort((a, b) => b.points - a.points);
+
+    // Find current user's rank (1-indexed)
+    const myRank = sorted.findIndex((m) => m.id === currentUserId) + 1;
+    return myRank || members.length;
+  }, [members, history, currentUserId]);
 
   return (
     <View style={s.wrap}>
@@ -153,21 +175,6 @@ export default function ProfileScreen({ navigation }) {
               />
               <Text style={s.statValue}>{choresDone}</Text>
               <Text style={s.statLabel}>Chores Done</Text>
-            </View>
-          </View>
-
-          {/* Badges Section */}
-          <View style={s.badgesSection}>
-            <Text style={s.sectionTitle}>Badges</Text>
-            <View style={s.badgesList}>
-              <Pressable style={s.menuItem}>
-                <Image
-                  /*chevron*/
-                  source={require("../../assets/nav-bar-icons/star.png")}
-                  style={s.chevron}
-                />
-                <Text style={s.badgeName}>Grocery Goat</Text>
-              </Pressable>
             </View>
           </View>
 

@@ -71,8 +71,16 @@ export default function CompleteChoreModal({
 }
 
 const s = StyleSheet.create({
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.45)" },
-  center: { ...StyleSheet.absoluteFillObject, justifyContent: "center", alignItems: "center", padding: 20 },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  center: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
   card: {
     width: "100%",
     maxWidth: 460,
@@ -87,8 +95,18 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 6,
   },
-  header: { alignItems: "center", justifyContent: "center", paddingRight: 24, marginBottom: 6 },
-  title: { fontSize: 24, fontWeight: "700", color: "#6B5D52", textAlign: "center", fontFamily: "Jersey" },
+  header: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 24,
+    marginBottom: 6,
+  },
+  title: {
+    fontSize: 24,
+    color: "#6B5D52",
+    textAlign: "center",
+    fontFamily: "Jersey",
+  },
   close: { position: "absolute", right: 0, top: -2, padding: 4 },
   closeText: { fontSize: 20, color: "#7B7B7B" },
 
@@ -102,7 +120,12 @@ const s = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
   },
-  choreName: { fontSize: 20, fontWeight: "700", color: "#6B5D52", marginBottom: 8, fontFamily: "Jersey" },
+  choreName: {
+    fontSize: 20,
+    color: "#6B5D52",
+    marginBottom: 8,
+    fontFamily: "Jersey",
+  },
 
   dotsRow: { flexDirection: "row", marginBottom: 10 },
   dot: { width: 10, height: 10, borderRadius: 5 },
@@ -110,11 +133,23 @@ const s = StyleSheet.create({
   dotOn: { backgroundColor: "#FFC7D3" },
   dotOff: { backgroundColor: "#F3DDE1" },
 
-  pointsText: { fontSize: 14, color: "#6B5D52", fontFamily: "Kantumruy"},
+  pointsText: { fontSize: 14, color: "#6B5D52", fontFamily: "Kantumruy" },
   pointsNum: { fontWeight: "700", color: "#CC5C6C" },
 
-  primary: { backgroundColor: "#FFC7D3", borderRadius: 12, paddingVertical: 12, alignItems: "center", marginTop: 8 },
-  primaryText: { fontSize: 18, fontWeight: "700", color: "#6B5D52", fontFamily: "Jersey" },
-  secondary: { backgroundColor: "#B7E2E6", borderRadius: 12, paddingVertical: 12, alignItems: "center", marginTop: 10 },
-  secondaryText: { fontSize: 18, fontWeight: "700", color: "#6B5D52", fontFamily: "Jersey" },
+  primary: {
+    backgroundColor: "#FFC7D3",
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  primaryText: { fontSize: 18, color: "#6B5D52", fontFamily: "Jersey" },
+  secondary: {
+    backgroundColor: "#B7E2E6",
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  secondaryText: { fontSize: 18, color: "#6B5D52", fontFamily: "Jersey" },
 });
