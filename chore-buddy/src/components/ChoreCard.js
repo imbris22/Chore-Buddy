@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 
 export default function ChoreCard({ chore, isDone = false, ...props }) {
@@ -17,8 +18,10 @@ export default function ChoreCard({ chore, isDone = false, ...props }) {
     >
       <View style={[styles.iconBox, isDone && styles.iconBoxDone]}>
         {chore.icon ? (
-          <Image
-            source={chore.icon}
+          <SvgUri
+            width={32}
+            height={32}
+            uri={chore.icon}
             style={[styles.icon, isDone && styles.iconDone]}
           />
         ) : (
@@ -67,10 +70,9 @@ const styles = StyleSheet.create({
   icon: {
     width: 32,
     height: 32,
-    resizeMode: "contain",
   },
   iconDone: {
-    tintColor: "#A9A9A9",
+    opacity: 0.4,
   },
 
   iconPlaceholder: {
