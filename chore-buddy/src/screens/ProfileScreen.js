@@ -15,6 +15,31 @@ import LeaveCircleModal from "../components/LeaveCircleModal";
 import { useCircleStore } from "../state/circleStore";
 import { useTasksStore } from "../state/tasksStore";
 
+// Import avatars
+import bearAvatar from "../../assets/bear.png";
+import bunnyAvatar from "../../assets/bunny.png";
+import pandaAvatar from "../../assets/panda.png";
+import catAvatar from "../../assets/cat.png";
+import dinoAvatar from "../../assets/Dino.png";
+import frogAvatar from "../../assets/frog.png";
+import dogAvatar from "../../assets/dog.png";
+import koalaAvatar from "../../assets/koala.png";
+import pigAvatar from "../../assets/pig.png";
+import sheepAvatar from "../../assets/sheep.png";
+
+const AVATAR_MAP = {
+  bear: bearAvatar,
+  bunny: bunnyAvatar,
+  panda: pandaAvatar,
+  cat: catAvatar,
+  dino: dinoAvatar,
+  frog: frogAvatar,
+  dog: dogAvatar,
+  koala: koalaAvatar,
+  pig: pigAvatar,
+  sheep: sheepAvatar,
+};
+
 import Logo from "../../assets/logo.png";
 const TrophyIcon = require("../../assets/trophy.svg");
 const ZapIcon = require("../../assets/zap.svg");
@@ -46,7 +71,23 @@ export default function ProfileScreen({ navigation }) {
 
   const [showLeaveModal, setShowLeaveModal] = React.useState(false);
 
-  const myMember = members.find((m) => m.id === currentUserId) || members[0];
+  // Redirect to JoinCircle if user hasn't joined a circle
+  React.useEffect(() => {
+    if (!currentUserId) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "JoinCircle" }],
+      });
+    }
+  }, [currentUserId, navigation]);
+
+  const myMember = members.find((m) => m.id === currentUserId) ||
+    members[0] || { name: "User", avatarKey: null };
+
+  // Resolve avatar image from avatarKey
+  const avatarImage = myMember.avatarKey
+    ? AVATAR_MAP[myMember.avatarKey]
+    : myMember.avatar;
   const myHistory = history[currentUserId] || [];
 
   // Calculate stats from history (all-time points)
@@ -128,11 +169,13 @@ export default function ProfileScreen({ navigation }) {
           {/* Profile Card */}
           <View style={s.profileCard}>
             <View style={s.avatarContainer}>
-              <Image
-                source={myMember.avatar}
-                style={s.avatarImage}
-                resizeMode="contain"
-              />
+              {avatarImage && (
+                <Image
+                  source={avatarImage}
+                  style={s.avatarImage}
+                  resizeMode="contain"
+                />
+              )}
             </View>
             <Text style={s.name}>{myMember.name}</Text>
             <Text style={s.username}>{circleName || "No Circle"}</Text>

@@ -15,6 +15,31 @@ import { useCircleStore } from "../state/circleStore";
 import { useTasksStore } from "../state/tasksStore";
 import { currentWeek } from "../lib/cycle";
 
+// Import avatars
+import bearAvatar from "../../assets/bear.png";
+import bunnyAvatar from "../../assets/bunny.png";
+import pandaAvatar from "../../assets/panda.png";
+import catAvatar from "../../assets/cat.png";
+import dinoAvatar from "../../assets/Dino.png";
+import frogAvatar from "../../assets/frog.png";
+import dogAvatar from "../../assets/dog.png";
+import koalaAvatar from "../../assets/koala.png";
+import pigAvatar from "../../assets/pig.png";
+import sheepAvatar from "../../assets/sheep.png";
+
+const AVATAR_MAP = {
+  bear: bearAvatar,
+  bunny: bunnyAvatar,
+  panda: pandaAvatar,
+  cat: catAvatar,
+  dino: dinoAvatar,
+  frog: frogAvatar,
+  dog: dogAvatar,
+  koala: koalaAvatar,
+  pig: pigAvatar,
+  sheep: sheepAvatar,
+};
+
 import Logo from "../../assets/logo.png";
 const bellAsset = require("../../assets/bell.svg");
 
@@ -113,9 +138,13 @@ export default function RankingsScreen({ navigation }) {
                     <Text style={s.barName}>{podium[0].name}</Text>
                   </View>
 
-                  {podium[0].avatar && (
+                  {(podium[0].avatarKey || podium[0].avatar) && (
                     <Image
-                      source={podium[0].avatar}
+                      source={
+                        podium[0].avatarKey
+                          ? AVATAR_MAP[podium[0].avatarKey]
+                          : podium[0].avatar
+                      }
                       style={[s.avatar, s.avatarLeft]}
                       resizeMode="contain"
                     />
@@ -131,9 +160,13 @@ export default function RankingsScreen({ navigation }) {
                     <Text style={s.barName}>{podium[1].name}</Text>
                   </View>
 
-                  {podium[1].avatar && (
+                  {(podium[1].avatarKey || podium[1].avatar) && (
                     <Image
-                      source={podium[1].avatar}
+                      source={
+                        podium[1].avatarKey
+                          ? AVATAR_MAP[podium[1].avatarKey]
+                          : podium[1].avatar
+                      }
                       style={[s.avatar, s.avatarCenter]}
                       resizeMode="contain"
                     />
@@ -149,9 +182,13 @@ export default function RankingsScreen({ navigation }) {
                     <Text style={s.barName}>{podium[2].name}</Text>
                   </View>
 
-                  {podium[2].avatar && (
+                  {(podium[2].avatarKey || podium[2].avatar) && (
                     <Image
-                      source={podium[2].avatar}
+                      source={
+                        podium[2].avatarKey
+                          ? AVATAR_MAP[podium[2].avatarKey]
+                          : podium[2].avatar
+                      }
                       style={[s.avatar, s.avatarRight]}
                       resizeMode="contain"
                     />

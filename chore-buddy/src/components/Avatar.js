@@ -3,8 +3,34 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import COLORS from "../theme/colors";
 import ProgressBar from "./ProgressBar";
 
+// Import avatars
+import bearAvatar from "../../assets/bear.png";
+import bunnyAvatar from "../../assets/bunny.png";
+import pandaAvatar from "../../assets/panda.png";
+import catAvatar from "../../assets/cat.png";
+import dinoAvatar from "../../assets/Dino.png";
+import frogAvatar from "../../assets/frog.png";
+import dogAvatar from "../../assets/dog.png";
+import koalaAvatar from "../../assets/koala.png";
+import pigAvatar from "../../assets/pig.png";
+import sheepAvatar from "../../assets/sheep.png";
+
+const AVATAR_MAP = {
+  bear: bearAvatar,
+  bunny: bunnyAvatar,
+  panda: pandaAvatar,
+  cat: catAvatar,
+  dino: dinoAvatar,
+  frog: frogAvatar,
+  dog: dogAvatar,
+  koala: koalaAvatar,
+  pig: pigAvatar,
+  sheep: sheepAvatar,
+};
+
 export default function Avatar({
   image,
+  avatarKey,
   name,
   value = 0,
   max = 1,
@@ -12,23 +38,28 @@ export default function Avatar({
   imageOffsetX = 0, // optional: left/right nudge
   imageScale = 1,
 }) {
+  // Resolve avatar from key or use legacy image prop
+  const avatarSource = avatarKey ? AVATAR_MAP[avatarKey] : image;
+
   return (
     <View style={s.wrap}>
       <View style={s.stickerBox}>
-        <Image
-          source={image}
-          style={[
-            s.sticker,
-            {
-              transform: [
-                { translateY: imageOffsetY },
-                { translateX: imageOffsetX },
-                { scale: imageScale },
-              ],
-            },
-          ]}
-          resizeMode="contain"
-        />
+        {avatarSource && (
+          <Image
+            source={avatarSource}
+            style={[
+              s.sticker,
+              {
+                transform: [
+                  { translateY: imageOffsetY },
+                  { translateX: imageOffsetX },
+                  { scale: imageScale },
+                ],
+              },
+            ]}
+            resizeMode="contain"
+          />
+        )}
       </View>
       <Text style={s.name}>{name}</Text>
       <View style={s.bar}>

@@ -70,7 +70,15 @@ export default function ChoreBoardScreen({ navigation }) {
   const myMember = members.find((m) => m.id === currentUserId);
 
   const assignMap = assignments[cycleKey] || {};
-  const taskList = React.useMemo(() => Object.values(chores), [chores]);
+  const taskList = React.useMemo(() => {
+    // Sort by task ID (which contains timestamp) to maintain consistent order across devices
+    return Object.values(chores).sort((a, b) => {
+      // Extract timestamp from ID format: ch_1234567890
+      const timeA = parseInt(a.id.split("_")[1]) || 0;
+      const timeB = parseInt(b.id.split("_")[1]) || 0;
+      return timeA - timeB;
+    });
+  }, [chores]);
 
   const hasAllAssignments = React.useMemo(() => {
     if (taskList.length === 0) return true;
@@ -316,6 +324,7 @@ export default function ChoreBoardScreen({ navigation }) {
                 return (
                   <View key={m.id} style={s.circleItem}>
                     <Avatar
+                      avatarKey={m.avatarKey}
                       image={m.avatar}
                       name={m.name}
                       value={weeklyDone}

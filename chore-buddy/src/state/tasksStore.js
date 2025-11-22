@@ -66,14 +66,12 @@ export const useTasksStore = create(
         const state = get();
         const tasksRef = doc(db, "tasks", circleId);
         try {
-          // Convert chores with icon requires to strings for Firestore
+          // Remove icon property but keep iconKey for syncing
           const serializedChores = {};
           Object.keys(state.chores).forEach((key) => {
             const chore = state.chores[key];
-            serializedChores[key] = {
-              ...chore,
-              icon: null, // Icons can't be serialized, will restore from local
-            };
+            const { icon, ...choreWithoutIcon } = chore;
+            serializedChores[key] = choreWithoutIcon;
           });
 
           await setDoc(
@@ -101,22 +99,9 @@ export const useTasksStore = create(
           (snapshot) => {
             if (snapshot.exists()) {
               const data = snapshot.data();
-              const state = get();
-
-              // Merge remote chores with local icons
-              const mergedChores = {};
-              Object.keys(data.chores || {}).forEach((key) => {
-                mergedChores[key] = {
-                  ...data.chores[key],
-                  icon: state.chores[key]?.icon || null,
-                };
-              });
 
               set({
-                chores:
-                  Object.keys(mergedChores).length > 0
-                    ? mergedChores
-                    : state.chores,
+                chores: data.chores || {},
                 assignments: data.assignments || {},
                 status: data.status || {},
                 history: data.history || {},

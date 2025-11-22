@@ -59,11 +59,8 @@ export default function WelcomeSetupScreen({ navigation, route }) {
 
   const handleContinue = async () => {
     if (name.trim() !== "") {
-      // Find the selected avatar image
-      const avatarObj = AVATARS.find((a) => a.id === selectedAvatar);
-
-      // Set current user in the store
-      await setCurrentUser(name.trim(), avatarObj.image);
+      // Store avatar key instead of image object
+      await setCurrentUser(name.trim(), selectedAvatar);
 
       // Navigate to ChoreBoard
       navigation.reset({

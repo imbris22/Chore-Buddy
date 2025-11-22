@@ -82,7 +82,7 @@ export default function AddChoreScreen({ navigation }) {
   };
 
   const handleCreate = () => {
-    if (!name.trim()) return;
+    if (!name.trim() || !iconKey) return;
 
     const id = `ch_${Date.now()}`;
     const newChore = {
@@ -91,7 +91,7 @@ export default function AddChoreScreen({ navigation }) {
       points: difficulty,
       recurring,
       frequency, // stored in the task store
-      icon: iconKey ? iconSourceByKey[iconKey] : null,
+      iconKey: iconKey, // Store the key, not the URI
     };
 
     // 1) add the chore itself
@@ -285,8 +285,22 @@ export default function AddChoreScreen({ navigation }) {
         </View>
 
         {/* Create button */}
-        <Pressable style={s.createBtn} onPress={handleCreate}>
-          <Text style={s.createText}>Create Chore</Text>
+        <Pressable
+          style={[
+            s.createBtn,
+            (!name.trim() || !iconKey) && s.createBtnDisabled,
+          ]}
+          onPress={handleCreate}
+          disabled={!name.trim() || !iconKey}
+        >
+          <Text
+            style={[
+              s.createText,
+              (!name.trim() || !iconKey) && s.createTextDisabled,
+            ]}
+          >
+            Create Chore
+          </Text>
         </Pressable>
 
         <View style={{ height: 20 }} />
@@ -312,11 +326,7 @@ function IconButton({ selected, onPress, icon }) {
       onPress={onPress}
       style={[s.iconBtn, selected && s.iconBtnSelected]}
     >
-      <SvgUri
-        width={30}
-        height={30}
-        uri={Image.resolveAssetSource(icon).uri}
-      />
+      <SvgUri width={30} height={30} uri={Image.resolveAssetSource(icon).uri} />
     </Pressable>
   );
 }
@@ -426,6 +436,7 @@ const s = StyleSheet.create({
     fontFamily: "Kantumruy",
     fontSize: 14,
     color: COLORS.text,
+    padding: 0,
   },
 
   iconRow: {
@@ -535,10 +546,17 @@ const s = StyleSheet.create({
     paddingVertical: 16,
     alignItems: "center",
   },
+  createBtnDisabled: {
+    backgroundColor: "#E8D9CC",
+    opacity: 0.5,
+  },
   createText: {
     fontFamily: "Jersey",
     fontSize: 20,
     color: COLORS.text,
+  },
+  createTextDisabled: {
+    opacity: 0.7,
   },
 
   navWrap: { position: "absolute", bottom: 0, left: 0, right: 0 },

@@ -3,12 +3,28 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 
+const TrashIcon = require("../../assets/chore-icons/trash-2.svg");
+const BrushIcon = require("../../assets/chore-icons/brush-cleaning.svg");
+const UtensilsIcon = require("../../assets/chore-icons/utensils.svg");
+const BasketIcon = require("../../assets/chore-icons/shopping-basket.svg");
+
 export default function ChoreCard({ chore, isDone = false, ...props }) {
   // defensive: if chore is missing, don't crash UI
   if (!chore) {
     console.warn("ChoreCard rendered with undefined chore");
     return null;
   }
+
+  // Map icon keys to local asset URIs
+  const iconSourceByKey = {
+    trash: Image.resolveAssetSource(TrashIcon).uri,
+    brush: Image.resolveAssetSource(BrushIcon).uri,
+    utensils: Image.resolveAssetSource(UtensilsIcon).uri,
+    basket: Image.resolveAssetSource(BasketIcon).uri,
+  };
+
+  // Support both old format (icon URI) and new format (iconKey)
+  const iconUri = chore.iconKey ? iconSourceByKey[chore.iconKey] : chore.icon; // fallback for old chores
 
   return (
     <TouchableOpacity
@@ -17,15 +33,20 @@ export default function ChoreCard({ chore, isDone = false, ...props }) {
       {...props}
     >
       <View style={[styles.iconBox, isDone && styles.iconBoxDone]}>
-        {chore.icon ? (
+        {iconUri ? (
           <SvgUri
             width={32}
             height={32}
-            uri={chore.icon}
+            uri={iconUri}
             style={[styles.icon, isDone && styles.iconDone]}
           />
         ) : (
-          <View style={[styles.iconPlaceholder, isDone && styles.iconPlaceholderDone]} />
+          <View
+            style={[
+              styles.iconPlaceholder,
+              isDone && styles.iconPlaceholderDone,
+            ]}
+          />
         )}
       </View>
 

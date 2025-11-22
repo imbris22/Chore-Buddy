@@ -134,7 +134,7 @@ export const useCircleStore = create(
         );
       },
 
-      setCurrentUser: async (name, avatar) => {
+      setCurrentUser: async (name, avatarKey) => {
         const state = get();
 
         if (!state.circleId) {
@@ -178,8 +178,8 @@ export const useCircleStore = create(
             return;
           }
 
-          // Add new user to the real members list
-          const newUser = { id: newMemberId, name, avatar };
+          // Add new user to the real members list - store avatarKey instead of image
+          const newUser = { id: newMemberId, name, avatarKey };
           const updatedMembers = [...realMembers, newUser];
 
           const { chores, upsertAssignments } = useTasksStore.getState();
@@ -221,10 +221,15 @@ export const useCircleStore = create(
           (m) => m.id !== state.currentUserId
         );
 
-        // Update local state first
+        // Update local state first - clear everything
         set({
-          members: updatedMembers,
+          members: [],
           currentUserId: null,
+          circleId: null,
+          circleName: null,
+          memberPoints: {},
+          tieCursor: 0,
+          recurringNextIdx: {},
         });
 
         // Sync the removal to Firestore
@@ -241,6 +246,8 @@ export const useCircleStore = create(
 
           // Clear persisted data
           await AsyncStorage.removeItem("cb_circle");
+          // Also clear tasks data
+          useTasksStore.getState().clearCircleData();
         } catch (error) {
           console.error("Error leaving circle:", error);
         }
