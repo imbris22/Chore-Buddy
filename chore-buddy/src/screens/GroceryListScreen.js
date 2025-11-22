@@ -8,10 +8,11 @@ import {
   Pressable,
   Image,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import BottomNav from "../components/BottomNav";
 import { useGroceryStore } from "../state/groceryStore";
-import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
+const GroceryIcon = require("../../assets/shopping-bag.svg");
 import Logo from "../../assets/logo.png";
 
 const NAV_HEIGHT = 72;
@@ -52,7 +53,12 @@ export default function GroceryListScreen({ navigation }) {
         <View style={s.card}>
           <View style={s.headerRow}>
             <View style={s.titleLeft}>
-              <Image source={GroceryIcon} style={s.headerIcon} />
+              <SvgUri
+                width={24}
+                height={24}
+                uri={Image.resolveAssetSource(GroceryIcon).uri}
+                style={s.headerIcon}
+              />
               <Text style={s.headerTitle}>Grocery List</Text>
             </View>
             <Pressable onPress={() => navigation.goBack()}>
@@ -157,7 +163,7 @@ const s = StyleSheet.create({
     marginBottom: 12,
   },
   titleLeft: { flexDirection: "row", alignItems: "center" },
-  headerIcon: { width: 20, height: 20, marginRight: 6 },
+  headerIcon: { marginRight: 6 },
   headerTitle: { fontSize: 20, color: COLORS.text, fontFamily: "Jersey" },
 
   // match CompleteChoreModal closeText

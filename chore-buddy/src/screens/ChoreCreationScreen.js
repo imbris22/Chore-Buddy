@@ -8,6 +8,7 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import Slider from "@react-native-community/slider";
 import COLORS from "../theme/colors";
 import BottomNav from "../components/BottomNav";
@@ -17,10 +18,10 @@ import { currentWeek } from "../lib/cycle";
 import LeaveChoreModal from "../components/LeaveChoreModal";
 
 import Logo from "../../assets/logo.png";
-import TrashIcon from "../../assets/chore-icons/trash-2.png";
-import BrushIcon from "../../assets/chore-icons/brush-cleaning.png";
-import UtensilsIcon from "../../assets/chore-icons/utensils.png";
-import BasketIcon from "../../assets/chore-icons/shopping-basket.png";
+const TrashIcon = require("../../assets/chore-icons/trash-2.svg");
+const BrushIcon = require("../../assets/chore-icons/brush-cleaning.svg");
+const UtensilsIcon = require("../../assets/chore-icons/utensils.svg");
+const BasketIcon = require("../../assets/chore-icons/shopping-basket.svg");
 
 const NAV_HEIGHT = 72;
 
@@ -44,10 +45,10 @@ export default function AddChoreScreen({ navigation }) {
   const { currentUserId, circleId } = useCircleStore();
 
   const iconSourceByKey = {
-    trash: TrashIcon,
-    brush: BrushIcon,
-    utensils: UtensilsIcon,
-    basket: BasketIcon,
+    trash: Image.resolveAssetSource(TrashIcon).uri,
+    brush: Image.resolveAssetSource(BrushIcon).uri,
+    utensils: Image.resolveAssetSource(UtensilsIcon).uri,
+    basket: Image.resolveAssetSource(BasketIcon).uri,
   };
 
   const markDirty = () => {
@@ -311,7 +312,11 @@ function IconButton({ selected, onPress, icon }) {
       onPress={onPress}
       style={[s.iconBtn, selected && s.iconBtnSelected]}
     >
-      <Image source={icon} style={s.iconImg} resizeMode="contain" />
+      <SvgUri
+        width={30}
+        height={30}
+        uri={Image.resolveAssetSource(icon).uri}
+      />
     </Pressable>
   );
 }
@@ -441,10 +446,6 @@ const s = StyleSheet.create({
   iconBtnSelected: {
     borderColor: "#FFC7D3",
     backgroundColor: "#FFE4ED",
-  },
-  iconImg: {
-    width: 30,
-    height: 30,
   },
 
   difficultyCard: {
