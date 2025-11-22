@@ -286,15 +286,16 @@ const s = StyleSheet.create({
     height: 150,
   },
   name: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: "Jersey",
     color: COLORS.text,
     marginBottom: 4,
   },
   username: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "Kantumruy",
-    color: "#B7A596",
+    color: COLORS.text,
+    fontWeight: "600",
   },
 
   statsGrid: {
