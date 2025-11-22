@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     fontFamily: "Kantumruy",
     fontSize: 13,
+    textAlign: "center",
   },
   titleDone: {
     color: "#A9A9A9",

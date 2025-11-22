@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 
 // tabs config so it’s easy to wire to real navigation later
@@ -15,22 +16,22 @@ export const TABS = [
   {
     key: "Home",
     label: "Home",
-    icon: require("../../assets/nav-bar-icons/house.png"),
+    icon: require("../../assets/nav-bar-icons/house.svg"),
   },
   {
     key: "History",
     label: "History",
-    icon: require("../../assets/nav-bar-icons/history.png"),
+    icon: require("../../assets/nav-bar-icons/history.svg"),
   },
   {
     key: "Rankings",
     label: "Rankings",
-    icon: require("../../assets/nav-bar-icons/star.png"),
+    icon: require("../../assets/nav-bar-icons/star.svg"),
   },
   {
     key: "Profile",
     label: "Profile",
-    icon: require("../../assets/nav-bar-icons/user.png"),
+    icon: require("../../assets/nav-bar-icons/user.svg"),
   },
 ];
 
@@ -46,10 +47,11 @@ export default function BottomNav({ active = "Home", onTabPress }) {
               style={s.item}
               onPress={() => onTabPress?.(tab.key)}
             >
-              <Image
-                source={tab.icon}
+              <SvgUri
+                width={24}
+                height={24}
+                uri={Image.resolveAssetSource(tab.icon).uri}
                 style={[s.icon, isActive && s.iconActive]}
-                resizeMode="contain"
               />
               <Text style={[s.label, isActive && s.labelActive]}>
                 {tab.label}

@@ -356,7 +356,7 @@ const s = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.card,
+    backgroundColor: "#FFC7D3",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E8D9CC",

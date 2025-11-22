@@ -7,6 +7,7 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
+import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import ProgressBar from "../components/ProgressBar";
 import ChoreCard from "../components/ChoreCard";
@@ -19,7 +20,7 @@ import BottomNav from "../components/BottomNav";
 import CompleteChoreModal from "../components/CompleteChoreModal";
 
 import Logo from "../../assets/logo.png";
-import GroceryIcon from "../../assets/chore-icons/shopping-basket.png";
+const GroceryIcon = require("../../assets/shopping-bag.svg");
 
 const NAV_HEIGHT = 72;
 
@@ -280,7 +281,12 @@ export default function ChoreBoardScreen({ navigation }) {
           style={s.groceryBtn}
           onPress={() => navigation.navigate("GroceryList")}
         >
-          <Image source={GroceryIcon} style={s.groceryIcon} />
+          <SvgUri
+            width={22}
+            height={22}
+            uri={Image.resolveAssetSource(GroceryIcon).uri}
+            style={s.groceryIcon}
+          />
           <Text style={s.groceryText}>Grocery List</Text>
         </Pressable>
 
@@ -429,7 +435,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 12,
   },
-  groceryIcon: { width: 22, height: 22, marginRight: 10 },
+  groceryIcon: { marginRight: 10 },
   groceryText: { fontSize: 18, fontFamily: "Jersey", color: COLORS.text },
 
   section: {
