@@ -12,6 +12,7 @@ import { SvgUri } from "react-native-svg";
 import COLORS from "../theme/colors";
 import BottomNav from "../components/BottomNav";
 import { useGroceryStore } from "../state/groceryStore";
+import { useCircleStore } from "../state/circleStore";
 const GroceryIcon = require("../../assets/shopping-bag.svg");
 import Logo from "../../assets/logo.png";
 
@@ -19,19 +20,20 @@ const NAV_HEIGHT = 72;
 
 export default function GroceryListScreen({ navigation }) {
   const { items, addItem, toggleItem } = useGroceryStore();
+  const { circleId } = useCircleStore();
   const [text, setText] = React.useState("");
 
   // Set up Firestore listener
   React.useEffect(() => {
-    const unsubscribe = useGroceryStore.getState().listenToFirestore();
+    const unsubscribe = useGroceryStore.getState().listenToFirestore(circleId);
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, []);
+  }, [circleId]);
 
   const handleAdd = () => {
     if (!text.trim()) return;
-    addItem(text);
+    addItem(text, circleId);
     setText("");
   };
 
@@ -71,7 +73,7 @@ export default function GroceryListScreen({ navigation }) {
               <Pressable
                 key={item.id}
                 style={[s.itemRow, item.done && s.itemRowDone]}
-                onPress={() => toggleItem(item.id)}
+                onPress={() => toggleItem(item.id, circleId)}
               >
                 <View style={[s.checkbox, item.done && s.checkboxOn]}>
                   {item.done && <Text style={s.checkMark}>✓</Text>}
@@ -111,6 +113,9 @@ export default function GroceryListScreen({ navigation }) {
           active={null}
           onTabPress={(key) => {
             if (key === "Home") navigation.navigate("ChoreBoard");
+            if (key === "History") navigation.navigate("History");
+            if (key === "Rankings") navigation.navigate("Rankings");
+            if (key === "Profile") navigation.navigate("Profile");
           }}
         />
       </View>

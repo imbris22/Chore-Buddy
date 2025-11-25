@@ -3,10 +3,13 @@ import { create } from "zustand";
 import { db } from "../firebaseConfig";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 
-export const useGroceryStore = create((set) => ({
-  items: [{ id: "1", title: "Eggs", done: false }],
+export const useGroceryStore = create((set, get) => ({
+  items: [],
+  circleId: null, // track current circle
 
-  addItem: (title) => {
+  setCircleId: (circleId) => set({ circleId }),
+
+  addItem: (title, circleId) => {
     set((state) => {
       const t = title.trim();
       if (!t) return state;
@@ -18,13 +21,13 @@ export const useGroceryStore = create((set) => ({
       const newItems = [...state.items, item];
 
       // Sync to Firestore
-      setTimeout(() => useGroceryStore.getState().syncToFirestore(), 0);
+      setTimeout(() => useGroceryStore.getState().syncToFirestore(circleId), 0);
 
       return { items: newItems };
     });
   },
 
-  toggleItem: (id) => {
+  toggleItem: (id, circleId) => {
     // mark it as done first (so UI shows checked state)
     set((state) => ({
       items: state.items.map((it) =>
@@ -38,21 +41,22 @@ export const useGroceryStore = create((set) => ({
         items: state.items.filter((it) => it.id !== id),
       }));
       // Sync to Firestore after removal
-      setTimeout(() => useGroceryStore.getState().syncToFirestore(), 50);
+      setTimeout(() => useGroceryStore.getState().syncToFirestore(circleId), 50);
     }, 300); // 300ms delay
   },
 
-  removeItem: (id) => {
+  removeItem: (id, circleId) => {
     set((state) => ({
       items: state.items.filter((it) => it.id !== id),
     }));
-    setTimeout(() => useGroceryStore.getState().syncToFirestore(), 0);
+    setTimeout(() => useGroceryStore.getState().syncToFirestore(circleId), 0);
   },
 
   // Sync to Firestore
-  syncToFirestore: async () => {
+  syncToFirestore: async (circleId) => {
+    if (!circleId) return;
     const state = useGroceryStore.getState();
-    const groceryRef = doc(db, "grocery", "default");
+    const groceryRef = doc(db, "grocery", circleId);
     try {
       await setDoc(
         groceryRef,
@@ -68,8 +72,9 @@ export const useGroceryStore = create((set) => ({
   },
 
   // Listen to Firestore changes
-  listenToFirestore: () => {
-    const groceryRef = doc(db, "grocery", "default");
+  listenToFirestore: (circleId) => {
+    if (!circleId) return null;
+    const groceryRef = doc(db, "grocery", circleId);
     return onSnapshot(
       groceryRef,
       (snapshot) => {
@@ -78,6 +83,9 @@ export const useGroceryStore = create((set) => ({
           set({
             items: data.items || [],
           });
+        } else {
+          // If no data exists, start with empty list
+          set({ items: [] });
         }
       },
       (error) => {
