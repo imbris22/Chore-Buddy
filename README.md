@@ -27,5 +27,5 @@ Follow the steps below to run the Chore Buddy app and reproduce the results show
 * Scan the QR code displayed in your terminal using your device's camera.
 * Open the project in <b>Expo Go</b> when prompted.
 
-### 7. Interact with the prototype
+### 7. Interact with the app
 * Once the app loads, click on the icons to navigate the app.
