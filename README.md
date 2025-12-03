@@ -4,8 +4,8 @@ HCI Final Project
 ## AI attribution
 All code in this project was developed using AI-assisted generation and human oversight and refinement.
 
-## Running the implementation prototype
-Follow the steps below to run the Chore Buddy app and reproduce the results shown in video demonstration.
+## Running the app
+Follow the steps below to run the Chore Buddy app and reproduce the results shown in the video demonstration.
 
 ### 1. Download and open the repository
 * Clone or download this repository from GitHub.
@@ -28,4 +28,4 @@ Follow the steps below to run the Chore Buddy app and reproduce the results show
 * Open the project in <b>Expo Go</b> when prompted.
 
 ### 7. Interact with the app
-* Once the app loads, click on the icons to navigate the app.
+* Once the app loads, click on the icons to navigate within the app.
